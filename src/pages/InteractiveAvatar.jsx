@@ -313,7 +313,7 @@ const MultiStepForm = ({ toggleForm, setToggleForm }) => {
       };
 
       const response = await axios.post(
-        'https://api.jotform.com/form/241841575846062/submissions',
+        'https://submit.jotform.com/submit/241841575846062',
         submissionData,
         {
           headers: {
@@ -1510,16 +1510,11 @@ const InteractiveAvatar = () => {
 
   const submitFormData = async (formData) => {
     try {
-      const response = await axios.post(
-        'https://api.jotform.com/form/241841575846062/submissions',
-        { submission: formData },
-        {
-          headers: {
-            APIKEY: '07c05b71d9b676d89fe92feaa1b77979',
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      console.log('Submitting form data:', formData);
+     const response = await axios.post(
+  'http://localhost:3000/api/submit-to-jotform',
+  formData
+);
 
       if (response.data.responseCode === 200) {
         setShowForm(false);
