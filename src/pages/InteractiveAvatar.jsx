@@ -262,77 +262,96 @@ const MultiStepForm = ({ toggleForm, setToggleForm }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    setLoading(true);
-    try {
-      const submissionData = {
-        submission: {
-          '3': formData.name,
-          '4': formData.ssn,
-          '5': formData.primaryPhone,
-          '6': formData.secondaryPhone,
-          '7': formData.jobs[0]?.jobTitle || '',
-          '8': formData.jobs[0]?.rateOfPay || '',
-          '9': formData.jobs[0]?.payPeriod || '',
-          '10': formData.jobs[0]?.hoursPerDay || '',
-          '11': formData.jobs[0]?.daysPerWeek || '',
-          '12': formData.jobs[0]?.tasksDescription || '',
-          '13': formData.jobs[0]?.reportTasks || '',
-          '14': formData.jobs[0]?.supervisoryDuties || '',
-          '15': formData.jobs[0]?.equipmentUsed || '',
-          '16': formData.jobs[0]?.interactionRequired ? 'Yes' : 'No',
-          '17': formData.jobs[0]?.interactionDetails || '',
-          '18': formData.jobs[0]?.physicalActivities.standingWalking || '',
-          '19': formData.jobs[0]?.physicalActivities.sitting || '',
-          '20': formData.jobs[0]?.physicalActivities.stooping || '',
-          '21': formData.jobs[0]?.physicalActivities.kneeling || '',
-          '22': formData.jobs[0]?.physicalActivities.crouching || '',
-          '23': formData.jobs[0]?.physicalActivities.crawling || '',
-          '24': formData.jobs[0]?.physicalActivities.climbingStairs || '',
-          '25': formData.jobs[0]?.physicalActivities.climbingLadders || '',
-          '26': formData.jobs[0]?.physicalActivities.fingerUseOneHand || '',
-          '27': formData.jobs[0]?.physicalActivities.fingerUseBothHands || '',
-          '28': formData.jobs[0]?.physicalActivities.handUseOneHand || '',
-          '29': formData.jobs[0]?.physicalActivities.handUseBothHands || '',
-          '30': formData.jobs[0]?.physicalActivities.reachShoulderOneArm || '',
-          '31': formData.jobs[0]?.physicalActivities.reachShoulderBothArms || '',
-          '32': formData.jobs[0]?.physicalActivities.reachOverheadOneArm || '',
-          '33': formData.jobs[0]?.physicalActivities.reachOverheadBothArms || '',
-          '34': formData.jobs[0]?.liftingDetails || '',
-          '35': formData.jobs[0]?.heaviestWeight || '',
-          '36': formData.jobs[0]?.frequentWeight || '',
-          '37': formData.jobs[0]?.exposures.join(', ') || '',
-          '38': formData.jobs[0]?.exposureDetails || '',
-          '39': formData.jobs[0]?.medicalImpact || '',
-          '40': formData.additionalInfo || '',
-          '41': formData.reportDate,
-          '42': formData.completedBy,
-        },
-      };
-
-      const response = await axios.post(
-        'https://submit.jotform.com/submit/241841575846062',
-        submissionData,
-        {
-          headers: {
-            APIKEY: '07c05b71d9b676d89fe92feaa1b77979',
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (response.data.responseCode === 200) {
-        setSubmissionSuccess(true);
-      }
-    } catch (error) {
-      console.error('Submission error:', error);
-      setErrors({ submit: 'Failed to submit form. Please try again.' });
-    } finally {
-      setLoading(false);
+const submitFormData = async (formData) => {
+  try {
+    // Create FormData object for proper URL encoding
+    const formDataToSubmit = new FormData();
+    
+    // Basic information
+    formDataToSubmit.append('submission[input_190]', formData.name);
+    formDataToSubmit.append('submission[input_326]', formData.ssn);
+    formDataToSubmit.append('submission[input_327_full]', formData.primaryPhone);
+    if (formData.secondaryPhone) {
+      formDataToSubmit.append('submission[input_328_full]', formData.secondaryPhone);
     }
-  };
+
+    // Job information (only submitting first job for simplicity)
+    const job = formData.jobs[0] || {};
+    formDataToSubmit.append('submission[input_199]', job.jobTitle || '');
+    formDataToSubmit.append('submission[input_330]', job.rateOfPay || '');
+    formDataToSubmit.append('submission[input_331]', job.payPeriod || '');
+    formDataToSubmit.append('submission[input_332]', job.hoursPerDay || '');
+    formDataToSubmit.append('submission[input_333]', job.daysPerWeek || '');
+    formDataToSubmit.append('submission[input_334]', job.tasksDescription || '');
+    formDataToSubmit.append('submission[input_335]', job.reportTasks || '');
+    formDataToSubmit.append('submission[input_206]', job.supervisoryDuties || '');
+    formDataToSubmit.append('submission[input_207]', job.equipmentUsed || '');
+    formDataToSubmit.append('submission[input_209]', job.interactionRequired ? 'Yes' : 'No');
+    formDataToSubmit.append('submission[input_208]', job.interactionDetails || '');
+
+    // Physical activities
+    const physical = job.physicalActivities || {};
+    formDataToSubmit.append('submission[input_340_0]', physical.standingWalking || '');
+    formDataToSubmit.append('submission[input_340_1]', physical.sitting || '');
+    formDataToSubmit.append('submission[input_340_2]', physical.stooping || '');
+    formDataToSubmit.append('submission[input_340_3]', physical.kneeling || '');
+    formDataToSubmit.append('submission[input_340_4]', physical.crouching || '');
+    formDataToSubmit.append('submission[input_340_5]', physical.crawling || '');
+    formDataToSubmit.append('submission[input_340_6]', physical.climbingStairs || '');
+    formDataToSubmit.append('submission[input_340_7]', physical.climbingLadders || '');
+
+    // Other job details
+    formDataToSubmit.append('submission[input_341]', job.liftingDetails || '');
+    formDataToSubmit.append('submission[input_342]', job.heaviestWeight || '');
+    formDataToSubmit.append('submission[input_343]', job.frequentWeight || '');
+    formDataToSubmit.append('submission[input_344]', job.exposures?.join(', ') || '');
+    formDataToSubmit.append('submission[input_345]', job.exposureDetails || '');
+    formDataToSubmit.append('submission[input_346]', job.medicalImpact || '');
+
+    // Additional info
+    formDataToSubmit.append('submission[input_31]', formData.additionalInfo || '');
+    formDataToSubmit.append('submission[input_315]', formData.reportDate);
+    formDataToSubmit.append('submission[input_317]', formData.completedBy);
+
+    // Add API key if required
+    formDataToSubmit.append('apikey', '07c05b71d9b676d89fe92feaa1b77979');
+
+    const response = await axios.post(
+      'https://form.jotform.com/241841575846062',
+      formDataToSubmit,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Submission error:', error);
+    throw error;
+  }
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
+  setLoading(true);
+  
+  try {
+    const success = await submitFormData(formData);
+    if (success) {
+      setSubmissionSuccess(true);
+    }
+  } catch (error) {
+    setErrors({ submit: 'Failed to submit form. Please try again.' });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const weightOptions = [
     'None',
@@ -1508,28 +1527,78 @@ const InteractiveAvatar = () => {
     setChat((prev) => [...prev, newMessage]);
   };
 
-  const submitFormData = async (formData) => {
-    try {
-      console.log('Submitting form data:', formData);
-     const response = await axios.post(
-  'http://localhost:3000/api/submit-to-jotform',
-  formData
-);
+  const submitFormData = async (e) => {
+    console.log('Submitting form data:1', e); 
 
-      if (response.data.responseCode === 200) {
-        setShowForm(false);
-        Swal.fire({
-          title: 'Thank you!',
-          text: 'Your information has been submitted successfully. Our team will reach out to you soon.',
-          icon: 'success',
-          confirmButtonText: 'OK',
-        });
-        await endSession();
+       e.preventDefault();
+    if (!validateForm()) return;
+    setLoading(true);
+     const submissionData = {
+        submission: {
+          '#input_190': formData.name,
+          '#input_326': formData.ssn,
+          '#input_327_full': formData.primaryPhone,
+          '#input_328_full': formData.secondaryPhone,
+          '#input_197_0_0,': formData.jobs[0]?.jobTitle || '',
+          '8': formData.jobs[0]?.rateOfPay || '',
+          '9': formData.jobs[0]?.payPeriod || '',
+          '10': formData.jobs[0]?.hoursPerDay || '',
+          '11': formData.jobs[0]?.daysPerWeek || '',
+          '12': formData.jobs[0]?.tasksDescription || '',
+          '13': formData.jobs[0]?.reportTasks || '',
+          '14': formData.jobs[0]?.supervisoryDuties || '',
+          '15': formData.jobs[0]?.equipmentUsed || '',
+          '16': formData.jobs[0]?.interactionRequired ? 'Yes' : 'No',
+          '17': formData.jobs[0]?.interactionDetails || '',
+          '18': formData.jobs[0]?.physicalActivities.standingWalking || '',
+          '19': formData.jobs[0]?.physicalActivities.sitting || '',
+          '20': formData.jobs[0]?.physicalActivities.stooping || '',
+          '21': formData.jobs[0]?.physicalActivities.kneeling || '',
+          '22': formData.jobs[0]?.physicalActivities.crouching || '',
+          '23': formData.jobs[0]?.physicalActivities.crawling || '',
+          '24': formData.jobs[0]?.physicalActivities.climbingStairs || '',
+          '25': formData.jobs[0]?.physicalActivities.climbingLadders || '',
+          '26': formData.jobs[0]?.physicalActivities.fingerUseOneHand || '',
+          '27': formData.jobs[0]?.physicalActivities.fingerUseBothHands || '',
+          '28': formData.jobs[0]?.physicalActivities.handUseOneHand || '',
+          '29': formData.jobs[0]?.physicalActivities.handUseBothHands || '',
+          '30': formData.jobs[0]?.physicalActivities.reachShoulderOneArm || '',
+          '31': formData.jobs[0]?.physicalActivities.reachShoulderBothArms || '',
+          '32': formData.jobs[0]?.physicalActivities.reachOverheadOneArm || '',
+          '33': formData.jobs[0]?.physicalActivities.reachOverheadBothArms || '',
+          '34': formData.jobs[0]?.liftingDetails || '',
+          '35': formData.jobs[0]?.heaviestWeight || '',
+          '36': formData.jobs[0]?.frequentWeight || '',
+          '37': formData.jobs[0]?.exposures.join(', ') || '',
+          '38': formData.jobs[0]?.exposureDetails || '',
+          '39': formData.jobs[0]?.medicalImpact || '',
+          '40': formData.additionalInfo || '',
+          '41': formData.reportDate,
+          '42': formData.completedBy,
+        },
+      };
+
+     try {
+    const response = await axios.post(
+      'http://localhost:3000/api/submit-to-jotform',
+      submissionData,
+      {
+        headers: {
+          APIKEY: '07c05b71d9b676d89fe92feaa1b77979',
+          'Content-Type': 'application/json',
+        },
       }
-    } catch (error) {
-      console.error('Error submitting form data:', error);
-      setErrorMessage('Failed to submit form data. Please try again.');
+    );
+
+    if (response.data.responseCode === 200) {
+      setSubmissionSuccess(true);
     }
+  } catch (error) {
+    console.error('Submission error:', error);
+    setErrors({ submit: 'Failed to submit form. Please try again.' });
+  } finally {
+    setLoading(false);
+  }
   };
 
   const handleError = (error) => {
@@ -2047,7 +2116,7 @@ const InteractiveAvatar = () => {
           <div className="md:max-w-[50%] w-full">
             {showForm ? (
               <MultiStepForm
-                onSubmit={submitFormData}
+                 onSubmit={submitFormData}
                 onCancel={() => setShowForm(false)}
                 avatarRef={avatarRef}
                 toggleForm={toggleForm}
