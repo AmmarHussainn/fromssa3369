@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import JotformEmbed from 'react-jotform-embed';
+
 import Swal from 'sweetalert2';
 import StreamingAvatar, {
   AvatarQuality,
@@ -145,12 +147,12 @@ const MultiStepForm = ({ toggleForm, setToggleForm }) => {
       jobs: prev.jobs.map((job, i) =>
         i === index
           ? {
-              ...job,
-              physicalActivities: {
-                ...job.physicalActivities,
-                [field]: value,
-              },
-            }
+            ...job,
+            physicalActivities: {
+              ...job.physicalActivities,
+              [field]: value,
+            },
+          }
           : job
       ),
     }));
@@ -262,96 +264,96 @@ const MultiStepForm = ({ toggleForm, setToggleForm }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-const submitFormData = async (formData) => {
-  try {
-    // Create FormData object for proper URL encoding
-    const formDataToSubmit = new FormData();
-    
-    // Basic information
-    formDataToSubmit.append('submission[input_190]', formData.name);
-    formDataToSubmit.append('submission[input_326]', formData.ssn);
-    formDataToSubmit.append('submission[input_327_full]', formData.primaryPhone);
-    if (formData.secondaryPhone) {
-      formDataToSubmit.append('submission[input_328_full]', formData.secondaryPhone);
-    }
+  const submitFormData = async (formData) => {
+    try {
+      // Create FormData object for proper URL encoding
+      const formDataToSubmit = new FormData();
 
-    // Job information (only submitting first job for simplicity)
-    const job = formData.jobs[0] || {};
-    formDataToSubmit.append('submission[input_199]', job.jobTitle || '');
-    formDataToSubmit.append('submission[input_330]', job.rateOfPay || '');
-    formDataToSubmit.append('submission[input_331]', job.payPeriod || '');
-    formDataToSubmit.append('submission[input_332]', job.hoursPerDay || '');
-    formDataToSubmit.append('submission[input_333]', job.daysPerWeek || '');
-    formDataToSubmit.append('submission[input_334]', job.tasksDescription || '');
-    formDataToSubmit.append('submission[input_335]', job.reportTasks || '');
-    formDataToSubmit.append('submission[input_206]', job.supervisoryDuties || '');
-    formDataToSubmit.append('submission[input_207]', job.equipmentUsed || '');
-    formDataToSubmit.append('submission[input_209]', job.interactionRequired ? 'Yes' : 'No');
-    formDataToSubmit.append('submission[input_208]', job.interactionDetails || '');
-
-    // Physical activities
-    const physical = job.physicalActivities || {};
-    formDataToSubmit.append('submission[input_340_0]', physical.standingWalking || '');
-    formDataToSubmit.append('submission[input_340_1]', physical.sitting || '');
-    formDataToSubmit.append('submission[input_340_2]', physical.stooping || '');
-    formDataToSubmit.append('submission[input_340_3]', physical.kneeling || '');
-    formDataToSubmit.append('submission[input_340_4]', physical.crouching || '');
-    formDataToSubmit.append('submission[input_340_5]', physical.crawling || '');
-    formDataToSubmit.append('submission[input_340_6]', physical.climbingStairs || '');
-    formDataToSubmit.append('submission[input_340_7]', physical.climbingLadders || '');
-
-    // Other job details
-    formDataToSubmit.append('submission[input_341]', job.liftingDetails || '');
-    formDataToSubmit.append('submission[input_342]', job.heaviestWeight || '');
-    formDataToSubmit.append('submission[input_343]', job.frequentWeight || '');
-    formDataToSubmit.append('submission[input_344]', job.exposures?.join(', ') || '');
-    formDataToSubmit.append('submission[input_345]', job.exposureDetails || '');
-    formDataToSubmit.append('submission[input_346]', job.medicalImpact || '');
-
-    // Additional info
-    formDataToSubmit.append('submission[input_31]', formData.additionalInfo || '');
-    formDataToSubmit.append('submission[input_315]', formData.reportDate);
-    formDataToSubmit.append('submission[input_317]', formData.completedBy);
-
-    // Add API key if required
-    formDataToSubmit.append('apikey', '07c05b71d9b676d89fe92feaa1b77979');
-
-    const response = await axios.post(
-      'https://form.jotform.com/241841575846062',
-      formDataToSubmit,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      // Basic information
+      formDataToSubmit.append('submission[input_190]', formData.name);
+      formDataToSubmit.append('submission[input_326]', formData.ssn);
+      formDataToSubmit.append('submission[input_327_full]', formData.primaryPhone);
+      if (formData.secondaryPhone) {
+        formDataToSubmit.append('submission[input_328_full]', formData.secondaryPhone);
       }
-    );
 
-    if (response.status === 200) {
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error('Submission error:', error);
-    throw error;
-  }
-};
+      // Job information (only submitting first job for simplicity)
+      const job = formData.jobs[0] || {};
+      formDataToSubmit.append('submission[input_199]', job.jobTitle || '');
+      formDataToSubmit.append('submission[input_330]', job.rateOfPay || '');
+      formDataToSubmit.append('submission[input_331]', job.payPeriod || '');
+      formDataToSubmit.append('submission[input_332]', job.hoursPerDay || '');
+      formDataToSubmit.append('submission[input_333]', job.daysPerWeek || '');
+      formDataToSubmit.append('submission[input_334]', job.tasksDescription || '');
+      formDataToSubmit.append('submission[input_335]', job.reportTasks || '');
+      formDataToSubmit.append('submission[input_206]', job.supervisoryDuties || '');
+      formDataToSubmit.append('submission[input_207]', job.equipmentUsed || '');
+      formDataToSubmit.append('submission[input_209]', job.interactionRequired ? 'Yes' : 'No');
+      formDataToSubmit.append('submission[input_208]', job.interactionDetails || '');
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!validateForm()) return;
-  setLoading(true);
-  
-  try {
-    const success = await submitFormData(formData);
-    if (success) {
-      setSubmissionSuccess(true);
+      // Physical activities
+      const physical = job.physicalActivities || {};
+      formDataToSubmit.append('submission[input_340_0]', physical.standingWalking || '');
+      formDataToSubmit.append('submission[input_340_1]', physical.sitting || '');
+      formDataToSubmit.append('submission[input_340_2]', physical.stooping || '');
+      formDataToSubmit.append('submission[input_340_3]', physical.kneeling || '');
+      formDataToSubmit.append('submission[input_340_4]', physical.crouching || '');
+      formDataToSubmit.append('submission[input_340_5]', physical.crawling || '');
+      formDataToSubmit.append('submission[input_340_6]', physical.climbingStairs || '');
+      formDataToSubmit.append('submission[input_340_7]', physical.climbingLadders || '');
+
+      // Other job details
+      formDataToSubmit.append('submission[input_341]', job.liftingDetails || '');
+      formDataToSubmit.append('submission[input_342]', job.heaviestWeight || '');
+      formDataToSubmit.append('submission[input_343]', job.frequentWeight || '');
+      formDataToSubmit.append('submission[input_344]', job.exposures?.join(', ') || '');
+      formDataToSubmit.append('submission[input_345]', job.exposureDetails || '');
+      formDataToSubmit.append('submission[input_346]', job.medicalImpact || '');
+
+      // Additional info
+      formDataToSubmit.append('submission[input_31]', formData.additionalInfo || '');
+      formDataToSubmit.append('submission[input_315]', formData.reportDate);
+      formDataToSubmit.append('submission[input_317]', formData.completedBy);
+
+      // Add API key if required
+      formDataToSubmit.append('apikey', '07c05b71d9b676d89fe92feaa1b77979');
+
+      const response = await axios.post(
+        'https://form.jotform.com/241841575846062',
+        formDataToSubmit,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Submission error:', error);
+      throw error;
     }
-  } catch (error) {
-    setErrors({ submit: 'Failed to submit form. Please try again.' });
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    setLoading(true);
+
+    try {
+      const success = await submitFormData(formData);
+      if (success) {
+        setSubmissionSuccess(true);
+      }
+    } catch (error) {
+      setErrors({ submit: 'Failed to submit form. Please try again.' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const weightOptions = [
     'None',
@@ -443,11 +445,10 @@ const handleSubmit = async (e) => {
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
-                    className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                      errors.name
+                    className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors.name
                         ? 'border-red-500'
                         : 'border-[var(--border-color)]'
-                    } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                   />
                   {errors.name && (
                     <p className="text-red-500 text-xs mt-1">{errors.name}</p>
@@ -462,11 +463,10 @@ const handleSubmit = async (e) => {
                     value={formData.ssn}
                     onChange={(e) => handleChange('ssn', e.target.value)}
                     placeholder="XXX-XX-XXXX"
-                    className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                      errors.ssn
+                    className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors.ssn
                         ? 'border-red-500'
                         : 'border-[var(--border-color)]'
-                    } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                   />
                   {errors.ssn && (
                     <p className="text-red-500 text-xs mt-1">{errors.ssn}</p>
@@ -490,11 +490,10 @@ const handleSubmit = async (e) => {
                       onChange={(e) =>
                         handleChange('primaryPhone', e.target.value)
                       }
-                      className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                        errors.primaryPhone
+                      className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors.primaryPhone
                           ? 'border-red-500'
                           : 'border-[var(--border-color)]'
-                      } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                     />
                     {errors.primaryPhone && (
                       <p className="text-red-500 text-xs mt-1">
@@ -554,11 +553,10 @@ const handleSubmit = async (e) => {
                         onChange={(e) =>
                           handleChange('jobTitle', e.target.value, index)
                         }
-                        className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                          errors[`jobTitle-${index}`]
+                        className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors[`jobTitle-${index}`]
                             ? 'border-red-500'
                             : 'border-[var(--border-color)]'
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                          } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                         placeholder="e.g., Cashier"
                       />
                       {errors[`jobTitle-${index}`] && (
@@ -615,11 +613,10 @@ const handleSubmit = async (e) => {
                             handleChange('hoursPerDay', e.target.value, index)
                           }
                           placeholder="e.g., 8"
-                          className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                            errors[`hoursPerDay-${index}`]
+                          className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors[`hoursPerDay-${index}`]
                               ? 'border-red-500'
                               : 'border-[var(--border-color)]'
-                          } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                            } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                         />
                         {errors[`hoursPerDay-${index}`] && (
                           <p className="text-red-500 text-xs mt-1">
@@ -638,11 +635,10 @@ const handleSubmit = async (e) => {
                             handleChange('daysPerWeek', e.target.value, index)
                           }
                           placeholder="e.g., 5"
-                          className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                            errors[`daysPerWeek-${index}`]
+                          className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors[`daysPerWeek-${index}`]
                               ? 'border-red-500'
                               : 'border-[var(--border-color)]'
-                          } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                            } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                         />
                         {errors[`daysPerWeek-${index}`] && (
                           <p className="text-red-500 text-xs mt-1">
@@ -662,11 +658,10 @@ const handleSubmit = async (e) => {
                         onChange={(e) =>
                           handleChange('tasksDescription', e.target.value, index)
                         }
-                        className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                          errors[`tasksDescription-${index}`]
+                        className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors[`tasksDescription-${index}`]
                             ? 'border-red-500'
                             : 'border-[var(--border-color)]'
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                          } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                         rows={4}
                         maxLength={525}
                       />
@@ -786,11 +781,10 @@ const handleSubmit = async (e) => {
                                 index
                               )
                             }
-                            className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                              errors[`interactionDetails-${index}`]
+                            className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors[`interactionDetails-${index}`]
                                 ? 'border-red-500'
                                 : 'border-[var(--border-color)]'
-                            } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                              } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                             rows={4}
                             maxLength={525}
                           />
@@ -1205,11 +1199,10 @@ const handleSubmit = async (e) => {
                                   index
                                 )
                               }
-                              className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                                errors[`exposureDetails-${index}`]
+                              className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors[`exposureDetails-${index}`]
                                   ? 'border-red-500'
                                   : 'border-[var(--border-color)]'
-                              } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                                } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                               rows={4}
                               maxLength={525}
                             />
@@ -1236,11 +1229,10 @@ const handleSubmit = async (e) => {
                           onChange={(e) =>
                             handleChange('medicalImpact', e.target.value, index)
                           }
-                          className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                            errors[`medicalImpact-${index}`]
+                          className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors[`medicalImpact-${index}`]
                               ? 'border-red-500'
                               : 'border-[var(--border-color)]'
-                          } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                            } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                           rows={4}
                           maxLength={525}
                         />
@@ -1304,11 +1296,10 @@ const handleSubmit = async (e) => {
                     type="date"
                     value={formData.reportDate}
                     onChange={(e) => handleChange('reportDate', e.target.value)}
-                    className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                      errors.reportDate
+                    className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors.reportDate
                         ? 'border-red-500'
                         : 'border-[var(--border-color)]'
-                    } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                   />
                   {errors.reportDate && (
                     <p className="text-red-500 text-xs mt-1">
@@ -1323,11 +1314,10 @@ const handleSubmit = async (e) => {
                   <select
                     value={formData.completedBy}
                     onChange={(e) => handleChange('completedBy', e.target.value)}
-                    className={`w-full px-3 py-2 text-[var(--input-text)] border ${
-                      errors.completedBy
+                    className={`w-full px-3 py-2 text-[var(--input-text)] border ${errors.completedBy
                         ? 'border-red-500'
                         : 'border-[var(--border-color)]'
-                    } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] bg-[var(--input-bg)]`}
                   >
                     <option value="applicant">Applicant</option>
                     <option value="representative">Representative</option>
@@ -1346,9 +1336,8 @@ const handleSubmit = async (e) => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`px-6 py-2 bg-[var(--primary-color)] text-[var(--bg-color)] rounded-md hover:bg-blue-700 flex items-center gap-2 ${
-                  loading ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`px-6 py-2 bg-[var(--primary-color)] text-[var(--bg-color)] rounded-md hover:bg-blue-700 flex items-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
               >
                 {loading ? (
                   <>
@@ -1528,77 +1517,77 @@ const InteractiveAvatar = () => {
   };
 
   const submitFormData = async (e) => {
-    console.log('Submitting form data:1', e); 
+    console.log('Submitting form data:1', e);
 
-       e.preventDefault();
+    e.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
-     const submissionData = {
-        submission: {
-          '#input_190': formData.name,
-          '#input_326': formData.ssn,
-          '#input_327_full': formData.primaryPhone,
-          '#input_328_full': formData.secondaryPhone,
-          '#input_197_0_0,': formData.jobs[0]?.jobTitle || '',
-          '8': formData.jobs[0]?.rateOfPay || '',
-          '9': formData.jobs[0]?.payPeriod || '',
-          '10': formData.jobs[0]?.hoursPerDay || '',
-          '11': formData.jobs[0]?.daysPerWeek || '',
-          '12': formData.jobs[0]?.tasksDescription || '',
-          '13': formData.jobs[0]?.reportTasks || '',
-          '14': formData.jobs[0]?.supervisoryDuties || '',
-          '15': formData.jobs[0]?.equipmentUsed || '',
-          '16': formData.jobs[0]?.interactionRequired ? 'Yes' : 'No',
-          '17': formData.jobs[0]?.interactionDetails || '',
-          '18': formData.jobs[0]?.physicalActivities.standingWalking || '',
-          '19': formData.jobs[0]?.physicalActivities.sitting || '',
-          '20': formData.jobs[0]?.physicalActivities.stooping || '',
-          '21': formData.jobs[0]?.physicalActivities.kneeling || '',
-          '22': formData.jobs[0]?.physicalActivities.crouching || '',
-          '23': formData.jobs[0]?.physicalActivities.crawling || '',
-          '24': formData.jobs[0]?.physicalActivities.climbingStairs || '',
-          '25': formData.jobs[0]?.physicalActivities.climbingLadders || '',
-          '26': formData.jobs[0]?.physicalActivities.fingerUseOneHand || '',
-          '27': formData.jobs[0]?.physicalActivities.fingerUseBothHands || '',
-          '28': formData.jobs[0]?.physicalActivities.handUseOneHand || '',
-          '29': formData.jobs[0]?.physicalActivities.handUseBothHands || '',
-          '30': formData.jobs[0]?.physicalActivities.reachShoulderOneArm || '',
-          '31': formData.jobs[0]?.physicalActivities.reachShoulderBothArms || '',
-          '32': formData.jobs[0]?.physicalActivities.reachOverheadOneArm || '',
-          '33': formData.jobs[0]?.physicalActivities.reachOverheadBothArms || '',
-          '34': formData.jobs[0]?.liftingDetails || '',
-          '35': formData.jobs[0]?.heaviestWeight || '',
-          '36': formData.jobs[0]?.frequentWeight || '',
-          '37': formData.jobs[0]?.exposures.join(', ') || '',
-          '38': formData.jobs[0]?.exposureDetails || '',
-          '39': formData.jobs[0]?.medicalImpact || '',
-          '40': formData.additionalInfo || '',
-          '41': formData.reportDate,
-          '42': formData.completedBy,
-        },
-      };
+    const submissionData = {
+      submission: {
+        '#input_190': formData.name,
+        '#input_326': formData.ssn,
+        '#input_327_full': formData.primaryPhone,
+        '#input_328_full': formData.secondaryPhone,
+        '#input_197_0_0,': formData.jobs[0]?.jobTitle || '',
+        '8': formData.jobs[0]?.rateOfPay || '',
+        '9': formData.jobs[0]?.payPeriod || '',
+        '10': formData.jobs[0]?.hoursPerDay || '',
+        '11': formData.jobs[0]?.daysPerWeek || '',
+        '12': formData.jobs[0]?.tasksDescription || '',
+        '13': formData.jobs[0]?.reportTasks || '',
+        '14': formData.jobs[0]?.supervisoryDuties || '',
+        '15': formData.jobs[0]?.equipmentUsed || '',
+        '16': formData.jobs[0]?.interactionRequired ? 'Yes' : 'No',
+        '17': formData.jobs[0]?.interactionDetails || '',
+        '18': formData.jobs[0]?.physicalActivities.standingWalking || '',
+        '19': formData.jobs[0]?.physicalActivities.sitting || '',
+        '20': formData.jobs[0]?.physicalActivities.stooping || '',
+        '21': formData.jobs[0]?.physicalActivities.kneeling || '',
+        '22': formData.jobs[0]?.physicalActivities.crouching || '',
+        '23': formData.jobs[0]?.physicalActivities.crawling || '',
+        '24': formData.jobs[0]?.physicalActivities.climbingStairs || '',
+        '25': formData.jobs[0]?.physicalActivities.climbingLadders || '',
+        '26': formData.jobs[0]?.physicalActivities.fingerUseOneHand || '',
+        '27': formData.jobs[0]?.physicalActivities.fingerUseBothHands || '',
+        '28': formData.jobs[0]?.physicalActivities.handUseOneHand || '',
+        '29': formData.jobs[0]?.physicalActivities.handUseBothHands || '',
+        '30': formData.jobs[0]?.physicalActivities.reachShoulderOneArm || '',
+        '31': formData.jobs[0]?.physicalActivities.reachShoulderBothArms || '',
+        '32': formData.jobs[0]?.physicalActivities.reachOverheadOneArm || '',
+        '33': formData.jobs[0]?.physicalActivities.reachOverheadBothArms || '',
+        '34': formData.jobs[0]?.liftingDetails || '',
+        '35': formData.jobs[0]?.heaviestWeight || '',
+        '36': formData.jobs[0]?.frequentWeight || '',
+        '37': formData.jobs[0]?.exposures.join(', ') || '',
+        '38': formData.jobs[0]?.exposureDetails || '',
+        '39': formData.jobs[0]?.medicalImpact || '',
+        '40': formData.additionalInfo || '',
+        '41': formData.reportDate,
+        '42': formData.completedBy,
+      },
+    };
 
-     try {
-    const response = await axios.post(
-      'http://localhost:3000/api/submit-to-jotform',
-      submissionData,
-      {
-        headers: {
-          APIKEY: '07c05b71d9b676d89fe92feaa1b77979',
-          'Content-Type': 'application/json',
-        },
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/submit-to-jotform',
+        submissionData,
+        {
+          headers: {
+            APIKEY: '07c05b71d9b676d89fe92feaa1b77979',
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.data.responseCode === 200) {
+        setSubmissionSuccess(true);
       }
-    );
-
-    if (response.data.responseCode === 200) {
-      setSubmissionSuccess(true);
+    } catch (error) {
+      console.error('Submission error:', error);
+      setErrors({ submit: 'Failed to submit form. Please try again.' });
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Submission error:', error);
-    setErrors({ submit: 'Failed to submit form. Please try again.' });
-  } finally {
-    setLoading(false);
-  }
   };
 
   const handleError = (error) => {
@@ -1892,6 +1881,33 @@ const InteractiveAvatar = () => {
     };
   }, []);
 
+
+  useEffect(() => {
+  if (showForm) {
+    const script1 = document.createElement('script');
+    script1.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+    script1.async = true;
+    script1.onload = () => {
+      console.log('JotForm embed script loaded');
+      const script2 = document.createElement('script');
+      script2.text = `window.jotformEmbedHandler("iframe[id='JotFormIFrame-241841575846062']", "https://form.jotform.com/")`;
+      document.body.appendChild(script2);
+    };
+    script1.onerror = () => {
+      console.error('Failed to load JotForm embed script');
+    };
+    document.body.appendChild(script1);
+
+    return () => {
+      const script2 = document.querySelector(
+        `script[textContent*="JotFormIFrame-241841575846062"]`
+      );
+      if (script2) document.body.removeChild(script2);
+      document.body.removeChild(script1);
+    };
+  }
+}, [showForm]);
+
   return (
     <div className="bg-[var(--card-bg)] w-screen h-screen">
       <div className="p-4 md:p-8">
@@ -1946,9 +1962,8 @@ const InteractiveAvatar = () => {
                   autoPlay
                   playsInline
                   muted={avatarMuted}
-                  className={`w-full h-full object-cover rounded-t-2xl ${
-                    connectionStatus !== 'connected' ? 'hidden' : ''
-                  }`}
+                  className={`w-full h-full object-cover rounded-t-2xl ${connectionStatus !== 'connected' ? 'hidden' : ''
+                    }`}
                 />
                 {connectionStatus === 'connected' ? (
                   <>
@@ -2011,11 +2026,10 @@ const InteractiveAvatar = () => {
                       <button
                         onClick={startSession}
                         disabled={isLoading}
-                        className={`w-full py-3 cursor-pointer px-4 rounded-lg font-medium text-white ${
-                          isLoading
+                        className={`w-full py-3 cursor-pointer px-4 rounded-lg font-medium text-white ${isLoading
                             ? 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
                             : 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
-                        }`}
+                          }`}
                       >
                         {isLoading ? (
                           <span className="flex items-center justify-center gap-2">
@@ -2037,11 +2051,10 @@ const InteractiveAvatar = () => {
                 <div className="flex">
                   <button
                     onClick={() => handleChatModeChange('text_mode')}
-                    className={`flex-1 cursor-pointer py-2 font-medium ${
-                      chatMode === 'text_mode'
+                    className={`flex-1 cursor-pointer py-2 font-medium ${chatMode === 'text_mode'
                         ? 'text-[var(--primary-color)] border-b-2 border-[var(--primary-color)]'
                         : 'text-[var(--primary-color)]'
-                    }`}
+                      }`}
                     aria-label="Text Mode"
                   >
                     <span className="flex items-center justify-center gap-2">
@@ -2051,11 +2064,10 @@ const InteractiveAvatar = () => {
                   </button>
                   <button
                     onClick={() => handleChatModeChange('voice_mode')}
-                    className={`flex-1 cursor-pointer py-2 font-medium ${
-                      chatMode === 'voice_mode'
+                    className={`flex-1 cursor-pointer py-2 font-medium ${chatMode === 'voice_mode'
                         ? 'text-[var(--primary-color)] border-b-2 border-[var(--primary-color)]'
                         : 'text-[var(--primary-color)]'
-                    }`}
+                      }`}
                     aria-label="Voice Mode"
                   >
                     <span className="flex items-center justify-center gap-2">
@@ -2091,11 +2103,10 @@ const InteractiveAvatar = () => {
                   </div>
                 ) : (
                   <div
-                    className={`p-3 mt-4 rounded-full text-center ${
-                      isUserTalking
+                    className={`p-3 mt-4 rounded-full text-center ${isUserTalking
                         ? 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
                         : 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
-                    }`}
+                      }`}
                   >
                     {isUserTalking ? (
                       <span className="flex items-center justify-center gap-2">
@@ -2115,13 +2126,33 @@ const InteractiveAvatar = () => {
           </div>
           <div className="md:max-w-[50%] w-full">
             {showForm ? (
-              <MultiStepForm
-                 onSubmit={submitFormData}
-                onCancel={() => setShowForm(false)}
-                avatarRef={avatarRef}
-                toggleForm={toggleForm}
-                setToggleForm={setToggleForm}
-              />
+              // <MultiStepForm
+              //    onSubmit={submitFormData}
+              //   onCancel={() => setShowForm(false)}
+              //   avatarRef={avatarRef}
+              //   toggleForm={toggleForm}
+              //   setToggleForm={setToggleForm}
+              // />
+
+              <div className="w-full h-full flex items-center  justify-center bg-blue-100">
+        <iframe
+          id="JotFormIFrame-241841575846062"
+          title="WORK HISTORY REPORT"
+          allow="geolocation; microphone; camera; fullscreen; payment"
+          src="https://form.jotform.com/241841575846062"
+          frameBorder="0"
+          style={{ minWidth: '100%', maxWidth: '100%', border: 'none' }}
+          scrolling="yes"
+          onError={() => console.error('Iframe failed to load')}
+          className='!h-[890px]'
+        />
+
+
+
+
+
+        
+      </div>
             ) : (
               <div className="bg-[var(--card-bg)] flex rounded-2xl shadow-xl h-full flex-col">
                 <div className="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-t-2xl text-[var(--primary-color)] px-6 py-3 flex justify-between items-center">
@@ -2173,16 +2204,14 @@ const InteractiveAvatar = () => {
                         return (
                           <div
                             key={index}
-                            className={`flex ${
-                              isUser ? 'justify-end' : 'justify-start'
-                            } animate-fadeIn`}
+                            className={`flex ${isUser ? 'justify-end' : 'justify-start'
+                              } animate-fadeIn`}
                           >
                             <div
                               className={`relative p-4 max-w-[75%] text-sm md:text-base rounded-2xl shadow-md
-                                ${
-                                  isUser
-                                    ? 'bg-[var(--chat-user-bg)] text-[var(--chat-user-text)] rounded-br-none'
-                                    : 'bg-[var(--chat-avatar-bg)] text-[var(--chat-avatar-text)] rounded-bl-none'
+                                ${isUser
+                                  ? 'bg-[var(--chat-user-bg)] text-[var(--chat-user-text)] rounded-br-none'
+                                  : 'bg-[var(--chat-avatar-bg)] text-[var(--chat-avatar-text)] rounded-bl-none'
                                 }`}
                             >
                               {showHeader && (
