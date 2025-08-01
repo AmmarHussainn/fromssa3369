@@ -31,6 +31,7 @@ import {
   Plus,
 } from 'lucide-react';
 import axios from 'axios';
+import WorkHistoryReport from '../components/WorkHistoryReport';
 
 const lightTheme = {
   '--bg-color': '#dee8f1',
@@ -2133,26 +2134,27 @@ const InteractiveAvatar = () => {
               //   toggleForm={toggleForm}
               //   setToggleForm={setToggleForm}
               // />
+              <WorkHistoryReport/>
 
-              <div className="w-full h-full flex items-center  justify-center bg-blue-100">
-        <iframe
-          id="JotFormIFrame-241841575846062"
-          title="WORK HISTORY REPORT"
-          allow="geolocation; microphone; camera; fullscreen; payment"
-          src="https://form.jotform.com/241841575846062"
-          frameBorder="0"
-          style={{ minWidth: '100%', maxWidth: '100%', border: 'none' }}
-          scrolling="yes"
-          onError={() => console.error('Iframe failed to load')}
-          className='!h-[890px]'
-        />
+      //         <div className="w-full h-full flex items-center  justify-center bg-blue-100">
+      //   <iframe
+      //     id="JotFormIFrame-241841575846062"
+      //     title="WORK HISTORY REPORT"
+      //     allow="geolocation; microphone; camera; fullscreen; payment"
+      //     src="https://form.jotform.com/241841575846062"
+      //     frameBorder="0"
+      //     style={{ minWidth: '100%', maxWidth: '100%', border: 'none' }}
+      //     scrolling="yes"
+      //     onError={() => console.error('Iframe failed to load')}
+      //     className='!h-[890px]'
+      //   />
 
 
 
 
 
         
-      </div>
+      // </div>
             ) : (
               <div className="bg-[var(--card-bg)] flex rounded-2xl shadow-xl h-full flex-col">
                 <div className="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-t-2xl text-[var(--primary-color)] px-6 py-3 flex justify-between items-center">
