@@ -137,11 +137,20 @@ const WorkHistoryReport = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  // const handleJobDetailChange = (index, field, value) => {
+  //   const updatedDetails = [...jobDetails];
+  //   updatedDetails[index][field] = value;
+  //   setJobDetails(updatedDetails);
+  // };
+
   const handleJobDetailChange = (index, field, value) => {
-    const updatedDetails = [...jobDetails];
-    updatedDetails[index][field] = value;
-    setJobDetails(updatedDetails);
+  const updatedDetails = [...jobDetails];
+  updatedDetails[index] = {
+    ...updatedDetails[index],
+    [field]: value,
   };
+  setJobDetails(updatedDetails);
+};
 
   const handleNestedChange = (index, category, field, value) => {
     const updatedDetails = [...jobDetails];
@@ -164,85 +173,116 @@ const WorkHistoryReport = () => {
 
   const handleSubmit = (e) => {
   e.preventDefault();
-  if (window.JotForm) {
-    // Map React state to JotForm fields
-    document.getElementById('input_190').value = formData.name; // Name
-    document.getElementById('input_326').value = formData.ssn; // SSN
-    document.getElementById('input_327_full').value = formData.primaryPhone; // Primary Phone
-    document.getElementById('input_328_full').value = formData.secondaryPhone; // Secondary Phone
-    document.getElementById('input_313').value = formData.remarks; // Remarks
-    document.getElementById('id_315').value = formData.completerDate; // Date Completed
-    const completerRadio = document.querySelector(`input[name="q316"][value="${formData.completer}"]`);
-    if (completerRadio) {
-      completerRadio.checked = true;
-    } else {
-      console.error(`Radio button for completer "${formData.completer}" not found`);
-    }
-    document.getElementById('input_317').value = formData.completerName; // Completer Name
-    document.getElementById('input_318').value = formData.completerRelationship; // Relationship
-    document.getElementById('input_319_addr_line1').value = formData.address1; // Address Line 1
-    document.getElementById('input_319_addr_line2').value = formData.address2; // Address Line 2
-    document.getElementById('input_319_city').value = formData.city; // City
-    document.getElementById('input_319_state').value = formData.state; // State
-    document.getElementById('input_319_postal').value = formData.zip; // Zip
-    document.getElementById('input_319_country').value = formData.country; // Country
-    document.getElementById('input_320_full').value = formData.completerPhone; // Completer Phone
+  if (!window.JotForm) {
+    console.error('JotForm is not loaded');
+    return;
+  }
 
-    jobs.forEach((job, index) => {
-      const baseId = index === 0 ? 199 : 200 + (index - 1) * 20 + 21; // Adjust based on JotForm field IDs
-      document.getElementById(`input_${baseId}`).value = job.jobTitle; // Job Title
-      document.getElementById(`input_${baseId + 1}`).value = jobDetails[index].rateOfPay; // Rate of Pay
-      const payFrequencyRadio = document.querySelector(`input[name="q${baseId + 2}_${jobDetails[index].payFrequency.toLowerCase()}"]`);
-      if (payFrequencyRadio) {
-        payFrequencyRadio.checked = true;
+  const safeSetValue = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.value = value;
+    else console.error(`Element with id "${id}" not found`);
+  };
+
+  safeSetValue('input_190', formData.name); // Name
+  safeSetValue('input_326', formData.ssn); // SSN
+  safeSetValue('input_327_full', formData.primaryPhone); // Primary Phone
+  safeSetValue('input_328_full', formData.secondaryPhone); // Secondary Phone
+  safeSetValue('input_313', formData.remarks); // Remarks
+  safeSetValue('id_315', formData.completerDate); // Date Completed
+
+  const completerRadio = document.querySelector(`input[name="q316"][value="${formData.completer}"]`);
+  if (completerRadio) {
+    completerRadio.checked = true;
+  } else {
+    console.error(`Radio button for completer "${formData.completer}" not found`);
+  }
+
+  safeSetValue('input_317', formData.completerName); // Completer Name
+  safeSetValue('input_318', formData.completerRelationship); // Relationship
+  safeSetValue('input_319_addr_line1', formData.address1);
+  safeSetValue('input_319_addr_line2', formData.address2);
+  safeSetValue('input_319_city', formData.city);
+  safeSetValue('input_319_state', formData.state);
+  safeSetValue('input_319_postal', formData.zip);
+  safeSetValue('input_319_country', formData.country);
+  safeSetValue('input_320_full', formData.completerPhone);
+
+  jobs.forEach((job, index) => {
+    const baseId = index === 0 ? 199 : 200 + (index - 1) * 20 + 21;
+
+    safeSetValue(`input_${baseId}`, job.jobTitle); // Job Title
+    safeSetValue(`input_${baseId + 1}`, jobDetails[index].rateOfPay); // Rate of Pay
+
+    // ✅ Pay Frequency (JotForm uses checkboxes w/ maxselection=1)
+    const payFreq = jobDetails[index].payFrequency;
+    ['Hour', 'Day', 'Week', 'Month', 'Year'].forEach((freq) => {
+      const cb = document.querySelector(`input[name="q223_percheck223[]"][value="${freq}"]`);
+      if (cb) cb.checked = false;
+    });
+    const selectedCheckbox = document.querySelector(`input[name="q223_percheck223[]"][value="${payFreq}"]`);
+    if (selectedCheckbox) {
+      selectedCheckbox.checked = true;
+    } else {
+      console.error(`Pay frequency checkbox for value "${payFreq}" not found`);
+    }
+
+    safeSetValue(`input_${baseId + 3}`, jobDetails[index].hoursPerDay);
+    safeSetValue(`input_${baseId + 4}`, jobDetails[index].daysPerWeek);
+    safeSetValue(`input_${baseId + 5}`, jobDetails[index].tasks);
+    safeSetValue(`input_${baseId + 6}`, jobDetails[index].reports);
+    safeSetValue(`input_${baseId + 7}`, jobDetails[index].supervisory);
+    safeSetValue(`input_${baseId + 8}`, jobDetails[index].equipment);
+
+    const interactionRadio = document.querySelector(
+      `input[name="q${baseId + 9}_${jobDetails[index].interaction.toLowerCase()}"]`
+    );
+    if (interactionRadio) {
+      interactionRadio.checked = true;
+    } else {
+      console.error(`Interaction radio for job ${index} not found`);
+    }
+
+    safeSetValue(`input_${baseId + 10}`, jobDetails[index].interactionDetails);
+    safeSetValue(`input_${baseId + 11}`, jobDetails[index].physicalActivities.standingWalking);
+    safeSetValue(`input_${baseId + 12}`, jobDetails[index].liftingDetails);
+
+    const heaviestWeightRadio = document.querySelector(
+      `input[name="q${baseId + 13}_${jobDetails[index].heaviestWeight.toLowerCase().replace(/\s/g, '')}"]`
+    );
+    if (heaviestWeightRadio) {
+      heaviestWeightRadio.checked = true;
+    } else {
+      console.error(`Heaviest weight radio for job ${index} not found`);
+    }
+
+    const frequentWeightRadio = document.querySelector(
+      `input[name="q${baseId + 14}_${jobDetails[index].frequentWeight.toLowerCase().replace(/\s/g, '')}"]`
+    );
+    if (frequentWeightRadio) {
+      frequentWeightRadio.checked = true;
+    } else {
+      console.error(`Frequent weight radio for job ${index} not found`);
+    }
+
+    jobDetails[index].exposures.forEach((exposure) => {
+      const exposureRadio = document.querySelector(
+        `input[name="q${baseId + 15}_${exposure.toLowerCase().replace(/\s/g, '')}"]`
+      );
+      if (exposureRadio) {
+        exposureRadio.checked = true;
       } else {
-        console.error(`Pay frequency radio for job ${index} not found`);
+        console.error(`Exposure radio for ${exposure} in job ${index} not found`);
       }
-      document.getElementById(`input_${baseId + 3}`).value = jobDetails[index].hoursPerDay; // Hours per Day
-      document.getElementById(`input_${baseId + 4}`).value = jobDetails[index].daysPerWeek; // Days per Week
-      document.getElementById(`input_${baseId + 5}`).value = jobDetails[index].tasks; // Tasks
-      document.getElementById(`input_${baseId + 6}`).value = jobDetails[index].reports; // Reports
-      document.getElementById(`input_${baseId + 7}`).value = jobDetails[index].supervisory; // Supervisory
-      document.getElementById(`input_${baseId + 8}`).value = jobDetails[index].equipment; // Equipment
-      const interactionRadio = document.querySelector(`input[name="q${baseId + 9}_${jobDetails[index].interaction.toLowerCase()}"]`);
-      if (interactionRadio) {
-        interactionRadio.checked = true;
-      } else {
-        console.error(`Interaction radio for job ${index} not found`);
-      }
-      document.getElementById(`input_${baseId + 10}`).value = jobDetails[index].interactionDetails; // Interaction Details
-      document.getElementById(`input_${baseId + 11}`).value = jobDetails[index].physicalActivities.standingWalking; // Standing/Walking
-      document.getElementById(`input_${baseId + 12}`).value = jobDetails[index].liftingDetails; // Lifting Details
-      const heaviestWeightRadio = document.querySelector(`input[name="q${baseId + 13}_${jobDetails[index].heaviestWeight.toLowerCase().replace(' ', '')}"]`);
-      if (heaviestWeightRadio) {
-        heaviestWeightRadio.checked = true;
-      } else {
-        console.error(`Heaviest weight radio for job ${index} not found`);
-      }
-      const frequentWeightRadio = document.querySelector(`input[name="q${baseId + 14}_${jobDetails[index].frequentWeight.toLowerCase().replace(' ', '')}"]`);
-      if (frequentWeightRadio) {
-        frequentWeightRadio.checked = true;
-      } else {
-        console.error(`Frequent weight radio for job ${index} not found`);
-      }
-      jobDetails[index].exposures.forEach((exposure) => {
-        const exposureRadio = document.querySelector(`input[name="q${baseId + 15}_${exposure.toLowerCase().replace(' ', '')}"]`);
-        if (exposureRadio) {
-          exposureRadio.checked = true;
-        } else {
-          console.error(`Exposure radio for ${exposure} in job ${index} not found`);
-        }
-      });
-      document.getElementById(`input_${baseId + 16}`).value = jobDetails[index].exposureDetails; // Exposure Details
-      document.getElementById(`input_${baseId + 17}`).value = jobDetails[index].medicalImpact; // Medical Impact
     });
 
-    // Submit the form
-    document.getElementById('241841575846062').submit();
-  } else {
-    console.error('JotForm is not loaded');
-  }
+    safeSetValue(`input_${baseId + 16}`, jobDetails[index].exposureDetails);
+    safeSetValue(`input_${baseId + 17}`, jobDetails[index].medicalImpact);
+  });
+
+  document.getElementById('241841575846062').submit(); // Submit JotForm
 };
+
 
   // ... (rest of the state management functions remain unchanged)
 
@@ -453,19 +493,28 @@ const WorkHistoryReport = () => {
                       className="mt-1 block w-full bg-input text-input border border-primary rounded-md p-3"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-label">Pay Frequency</label>
-                    <select
-                      id={`select_${baseId + 2}`} // Adjust ID
-                      value={jobDetails[index].payFrequency}
-                      onChange={(e) => handleJobDetailChange(index, 'payFrequency', e.target.value)}
-                      className="mt-1 block w-full bg-input text-input border border-primary rounded-md p-3"
-                    >
-                      {['Hour', 'Day', 'Week', 'Month', 'Year'].map((option) => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+  <label className="block text-sm font-medium text-label mb-2">Pay Frequency</label>
+  <div className="flex flex-wrap gap-4">
+    {['Hour', 'Day', 'Week', 'Month', 'Year'].map((option) => (
+      <label key={option} className="inline-flex items-center space-x-2">
+        <input
+          type="radio"
+          name={`payFrequency_${index}`}
+          value={option}
+          checked={jobDetails[index].payFrequency === option}
+          onChange={(e) =>
+            handleJobDetailChange(index, 'payFrequency', e.target.value)
+          }
+          className="form-radio text-primary h-4 w-4"
+        />
+        <span>{option}</span>
+      </label>
+    ))}
+  </div>
+</div>
+
+
                   {/* Add other job details fields with appropriate IDs (e.g., input_206, input_207, etc.) */}
                 </div>
               </section>
