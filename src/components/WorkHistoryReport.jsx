@@ -800,19 +800,74 @@
 
 
 
+import React, { useState, useEffect } from 'react';
 
-
-
-import React, { useState , useEffect } from 'react';
-import InputMask from 'react-input-mask';
 const WorkHistoryReport = () => {
-
-
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    email: '',
+    name: '',
+    ssn: '',
+    primaryPhone: '',
+    secondaryPhone: '',
+    jobs: Array(10).fill({ title: '', business: '', from: '', to: '' }),
+    jobDetails: Array(5).fill({
+      title: '',
+      rateOfPay: '',
+      payPeriod: '',
+      hoursPerDay: '',
+      daysPerWeek: '',
+      tasks: '',
+      reports: '',
+      supervision: '',
+      tools: '',
+      interaction: '',
+      interactionDetails: '',
+      physicalActivities: {
+        standingWalking: '',
+        sitting: '',
+        stooping: '',
+        kneeling: '',
+        crouching: '',
+        crawling: '',
+        climbingStairs: '',
+        climbingLadders: '',
+      },
+      handActivities: {
+        fingersOneHand: false,
+        fingersBothHands: false,
+        fingersTime: '',
+        graspOneHand: false,
+        graspBothHands: false,
+        graspTime: '',
+      },
+      armActivities: {
+        reachBelowOneArm: false,
+        reachBelowBothArms: false,
+        reachBelowTime: '',
+        reachOverheadOneArm: false,
+        reachOverheadBothArms: false,
+        reachOverheadTime: '',
+      },
+      liftingCarrying: '',
+      heaviestWeight: '',
+      frequentWeight: '',
+      exposures: [],
+      exposureDetails: '',
+      medicalConditions: '',
+    }),
+    remarks: '',
+    completionDate: '',
+    completer: '',
+    completerName: '',
+    completerRelationship: '',
+    address: {
+      street: '',
+      street2: '',
+      city: '',
+      state: '',
+      zip: '',
+      country: '',
+    },
+    completerPhone: '',
     formID: '252154456278462',
     simple_spc: '252154456278462-252154456278462',
     jsExecutionTracker: 'build-date-1754323901292',
@@ -824,43 +879,110 @@ const WorkHistoryReport = () => {
     website: '', // Anti-spam field
   });
 
-  // State for form submission and error handling
   const [formSubmitted, setFormSubmitted] = useState(false);
-
-  // State for conditional logic (mock for q8 and q9)
-  const [showConditionalField, setShowConditionalField] = useState(false);
+  const [showInteractionDetails, setShowInteractionDetails] = useState(Array(5).fill(false));
 
   // Custom phone number formatter
   const formatPhoneNumber = (value) => {
-    // Remove all non-digits
     const digits = value.replace(/\D/g, '');
-    // Apply (###) ###-#### format
-    if (digits.length <= 3) {
-      return digits;
-    } else if (digits.length <= 6) {
-      return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-    } else {
-      return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
-    }
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
   };
 
   // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (e, section, index) => {
+    const { name, value, type, checked } = e.target;
 
-    if (name === 'phoneNumber') {
-      // Format phone number
-      const formattedValue = formatPhoneNumber(value);
-      setFormData((prev) => ({ ...prev, [name]: formattedValue }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-
-    // Mock conditional logic for q8
-    if (name === 'otherField' && value === 'Other') {
-      setShowConditionalField(true);
-    } else if (name === 'otherField') {
-      setShowConditionalField(false);
+    if (section === 'topLevel') {
+      if (name === 'primaryPhone' || name === 'secondaryPhone' || name === 'completerPhone') {
+        const formattedValue = formatPhoneNumber(value);
+        setFormData((prev) => ({ ...prev, [name]: formattedValue }));
+      } else {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      }
+    } else if (section === 'jobs') {
+      setFormData((prev) => ({
+        ...prev,
+        jobs: prev.jobs.map((job, i) =>
+          i === index ? { ...job, [name]: value } : job
+        ),
+      }));
+    } else if (section === 'jobDetails') {
+      if (name === 'interaction') {
+        setShowInteractionDetails((prev) =>
+          prev.map((show, i) => (i === index ? value === 'Yes' : show))
+        );
+      }
+      if (type === 'checkbox') {
+        setFormData((prev) => ({
+          ...prev,
+          jobDetails: prev.jobDetails.map((detail, i) =>
+            i === index
+              ? {
+                  ...detail,
+                  exposures: checked
+                    ? [...detail.exposures, value]
+                    : detail.exposures.filter((exp) => exp !== value),
+                }
+              : detail
+          ),
+        }));
+      } else if (name.includes('physicalActivities')) {
+        const activity = name.split('.')[1];
+        setFormData((prev) => ({
+          ...prev,
+          jobDetails: prev.jobDetails.map((detail, i) =>
+            i === index
+              ? { ...detail, physicalActivities: { ...detail.physicalActivities, [activity]: value } }
+              : detail
+          ),
+        }));
+      } else if (name.includes('handActivities')) {
+        const [field, subField] = name.split('.');
+        setFormData((prev) => ({
+          ...prev,
+          jobDetails: prev.jobDetails.map((detail, i) =>
+            i === index
+              ? {
+                  ...detail,
+                  handActivities: {
+                    ...detail.handActivities,
+                    [subField]: type === 'checkbox' ? checked : value,
+                  },
+                }
+              : detail
+          ),
+        }));
+      } else if (name.includes('armActivities')) {
+        const [field, subField] = name.split('.');
+        setFormData((prev) => ({
+          ...prev,
+          jobDetails: prev.jobDetails.map((detail, i) =>
+            i === index
+              ? {
+                  ...detail,
+                  armActivities: {
+                    ...detail.armActivities,
+                    [subField]: type === 'checkbox' ? checked : value,
+                  },
+                }
+              : detail
+          ),
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          jobDetails: prev.jobDetails.map((detail, i) =>
+            i === index ? { ...detail, [name]: value } : detail
+          ),
+        }));
+      }
+    } else if (section === 'address') {
+      setFormData((prev) => ({
+        ...prev,
+        address: { ...prev.address, [name]: value },
+      }));
     }
   };
 
@@ -870,24 +992,97 @@ const WorkHistoryReport = () => {
     setFormSubmitted(true);
 
     // Validate required fields
-    if (!formData.firstName || !formData.lastName || !formData.phoneNumber) {
-      alert('There are incomplete required fields. Please complete them.');
-      return;
+    const requiredFields = [
+      { field: formData.name, name: 'Name' },
+      { field: formData.ssn, name: 'Social Security Number' },
+      { field: formData.primaryPhone, name: 'Primary Phone Number' },
+      { field: formData.completionDate, name: 'Completion Date' },
+      { field: formData.completer, name: 'Who is completing this report' },
+      { field: formData.completerName, name: 'Completer Name' },
+      { field: formData.completerRelationship, name: 'Relationship to Person' },
+      { field: formData.address.street, name: 'Street Address' },
+      { field: formData.completerPhone, name: 'Completer Phone Number' },
+    ];
+
+    for (const { field, name } of requiredFields) {
+      if (!field) {
+        alert(`There are incomplete required fields. Please complete ${name}.`);
+        return;
+      }
     }
 
     // Validate phone number format
     const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
-    if (!phoneRegex.test(formData.phoneNumber)) {
-      alert('Please enter a valid phone number in the format (###) ###-####.');
+    if (!phoneRegex.test(formData.primaryPhone)) {
+      alert('Please enter a valid primary phone number in the format (###) ###-####.');
+      return;
+    }
+    if (formData.secondaryPhone && !phoneRegex.test(formData.secondaryPhone)) {
+      alert('Please enter a valid secondary phone number in the format (###) ###-####.');
+      return;
+    }
+    if (!phoneRegex.test(formData.completerPhone)) {
+      alert('Please enter a valid completer phone number in the format (###) ###-####.');
       return;
     }
 
     // Prepare form data for JotForm
     const submissionData = {
-      'q3_fullName3[first]': formData.firstName,
-      'q3_fullName3[last]': formData.lastName,
-      'q5_phoneNumber5[full]': formData.phoneNumber,
-      q6_email6: formData.email,
+      'q1_name': formData.name,
+      'q2_ssn': formData.ssn,
+      'q3_phoneNumber[primary]': formData.primaryPhone,
+      'q3_phoneNumber[secondary]': formData.secondaryPhone,
+      ...formData.jobs.reduce((acc, job, index) => ({
+        ...acc,
+        [`q4_jobs[${index}][title]`]: job.title,
+        [`q4_jobs[${index}][business]`]: job.business,
+        [`q4_jobs[${index}][from]`]: job.from,
+        [`q4_jobs[${index}][to]`]: job.to,
+      }), {}),
+      ...formData.jobDetails.reduce((acc, detail, index) => ({
+        ...acc,
+        [`q5_jobDetails[${index}][title]`]: detail.title,
+        [`q5_jobDetails[${index}][rateOfPay]`]: detail.rateOfPay,
+        [`q5_jobDetails[${index}][payPeriod]`]: detail.payPeriod,
+        [`q5_jobDetails[${index}][hoursPerDay]`]: detail.hoursPerDay,
+        [`q5_jobDetails[${index}][daysPerWeek]`]: detail.daysPerWeek,
+        [`q5_jobDetails[${index}][tasks]`]: detail.tasks,
+        [`q5_jobDetails[${index}][reports]`]: detail.reports,
+        [`q5_jobDetails[${index}][supervision]`]: detail.supervision,
+        [`q5_jobDetails[${index}][tools]`]: detail.tools,
+        [`q5_jobDetails[${index}][interaction]`]: detail.interaction,
+        [`q5_jobDetails[${index}][interactionDetails]`]: detail.interactionDetails,
+        ...Object.entries(detail.physicalActivities).reduce((actAcc, [key, value]) => ({
+          ...actAcc,
+          [`q5_jobDetails[${index}][physicalActivities][${key}]`]: value,
+        }), {}),
+        ...Object.entries(detail.handActivities).reduce((actAcc, [key, value]) => ({
+          ...actAcc,
+          [`q5_jobDetails[${index}][handActivities][${key}]`]: value,
+        }), {}),
+        ...Object.entries(detail.armActivities).reduce((actAcc, [key, value]) => ({
+          ...actAcc,
+          [`q5_jobDetails[${index}][armActivities][${key}]`]: value,
+        }), {}),
+        [`q5_jobDetails[${index}][liftingCarrying]`]: detail.liftingCarrying,
+        [`q5_jobDetails[${index}][heaviestWeight]`]: detail.heaviestWeight,
+        [`q5_jobDetails[${index}][frequentWeight]`]: detail.frequentWeight,
+        [`q5_jobDetails[${index}][exposures]`]: detail.exposures.join(','),
+        [`q5_jobDetails[${index}][exposureDetails]`]: detail.exposureDetails,
+        [`q5_jobDetails[${index}][medicalConditions]`]: detail.medicalConditions,
+      }), {}),
+      'q6_remarks': formData.remarks,
+      'q7_completionDate': formData.completionDate,
+      'q8_completer': formData.completer,
+      'q9_completerName': formData.completerName,
+      'q10_completerRelationship': formData.completerRelationship,
+      'q11_address[street]': formData.address.street,
+      'q11_address[street2]': formData.address.street2,
+      'q11_address[city]': formData.address.city,
+      'q11_address[state]': formData.address.state,
+      'q11_address[zip]': formData.address.zip,
+      'q11_address[country]': formData.address.country,
+      'q12_completerPhone': formData.completerPhone,
       formID: formData.formID,
       simple_spc: formData.simple_spc,
       jsExecutionTracker: formData.jsExecutionTracker,
@@ -908,8 +1103,6 @@ const WorkHistoryReport = () => {
 
       if (response.ok) {
         alert('Form submitted successfully!');
-        // Handle redirect or thank-you page (JotForm.activeRedirect = "thanktext")
-        // Example: window.location.href = '/thank-you';
       } else {
         alert('Submission failed. Please try again.');
       }
@@ -926,9 +1119,8 @@ const WorkHistoryReport = () => {
     }));
   }, []);
 
-  
   return (
- <div className="min-h-screen bg-[#F3F3FE]">
+    <div className="min-h-screen bg-[#F3F3FE]">
       <form
         className="max-w-[700px] mx-auto bg-white rounded-[20px] p-0 font-inter text-base text-black"
         onSubmit={handleSubmit}
@@ -956,164 +1148,857 @@ const WorkHistoryReport = () => {
           {/* Header */}
           <li className="w-full" data-type="control_head">
             <div className="my-0 px-[52px] py-[40px]">
-              <h1 className="text-2xl text-black font-normal">New Customer Registration Form</h1>
+              <h1 className="text-2xl text-black font-normal">WORK HISTORY REPORT</h1>
+              <p className="text-sm text-gray-600">
+                Anyone who makes or causes to be made a false statement or representation of material fact for use in determining a payment under the Social Security Act, or knowingly conceals or fails to disclose an event with an intent to affect an initial or continued right to payment, commits a crime punishable under Federal law by fine, imprisonment, or both, and may be subject to administrative sanctions.
+              </p>
             </div>
           </li>
 
-          {/* Customer Details Text */}
+          {/* Section 1 - Information About You */}
           <li className="w-full" data-type="control_text">
             <div className="w-full">
-              <p className="text-[16pt] font-bold font-arial">Customer Details:</p>
+              <p className="text-[16pt] font-bold font-arial">SECTION 1 - INFORMATION ABOUT YOU</p>
+              <p className="text-sm text-gray-600">When a question refers to "you" or "your," it refers to the person who is applying for disability benefits. If you are completing this report for someone else, provide information about them.</p>
             </div>
           </li>
-
-          {/* Full Name */}
-          <li className="w-full" data-type="control_fullname">
-            <label className="block text-left text-black" htmlFor="first_3">
-              Full Name <span className="text-[#f23a3c]">*</span>
+          <li className="w-full" data-type="control_textbox">
+            <label className="block text-left text-black" htmlFor="name">
+              NAME <span className="text-[#f23a3c]">*</span>
             </label>
-            <div className="w-full flex gap-2.5">
-              <span className="inline-block align-top">
-                <input
-                  type="text"
-                  id="first_3"
-                  name="firstName"
-                  className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                    formSubmitted && !formData.firstName ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
-                  }`}
-                  autoComplete="section-input_3 given-name"
-                  data-component="first"
-                  aria-labelledby="label_3 sublabel_3_first"
-                  required
-                  value={formData.firstName}
-                  onChange={handleChange}
-                />
-                <label className="text-xs text-[#1a1a1a] min-h-[13px]" htmlFor="first_3">
-                  First Name
-                </label>
-              </span>
-              <span className="inline-block align-top">
-                <input
-                  type="text"
-                  id="last_3"
-                  name="lastName"
-                  className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                    formSubmitted && !formData.lastName ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
-                  }`}
-                  autoComplete="section-input_3 family-name"
-                  data-component="last"
-                  aria-labelledby="label_3 sublabel_3_last"
-                  required
-                  value={formData.lastName}
-                  onChange={handleChange}
-                />
-                <label className="text-xs text-[#1a1a1a] min-h-[13px]" htmlFor="last_3">
-                  Last Name
-                </label>
-              </span>
-            </div>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
+                formSubmitted && !formData.name ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
+              }`}
+              required
+              value={formData.name}
+              onChange={(e) => handleChange(e, 'topLevel')}
+            />
           </li>
-
-          {/* Phone Number */}
+          <li className="w-full" data-type="control_textbox">
+            <label className="block text-left text-black" htmlFor="ssn">
+              SOCIAL SECURITY NUMBER <span className="text-[#f23a3c]">*</span>
+            </label>
+            <input
+              type="text"
+              id="ssn"
+              name="ssn"
+              className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
+                formSubmitted && !formData.ssn ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
+              }`}
+              required
+              value={formData.ssn}
+              onChange={(e) => handleChange(e, 'topLevel')}
+            />
+          </li>
           <li className="w-full" data-type="control_phone">
-            <label className="block text-left text-black" htmlFor="input_5_full">
-              Phone Number <span className="text-[#f23a3c]">*</span>
+            <label className="block text-left text-black">
+              DAYTIME PHONE NUMBER(S) where we can call to speak with you or leave a message, if needed. Include area code or IDD and country code if outside the USA or Canada.
             </label>
-            <div className="w-full">
-              <span className="inline-block align-top">
+            <div className="w-full flex flex-col gap-2.5">
+              <span>
+                <label className="block text-left text-black" htmlFor="primaryPhone">
+                  Primary <span className="text-[#f23a3c]">*</span>
+                </label>
                 <input
                   type="tel"
-                  id="input_5_full"
-                  name="phoneNumber"
+                  id="primaryPhone"
+                  name="primaryPhone"
                   className={`border rounded p-2 text-base bg-white w-[310px] hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                    formSubmitted && !phoneRegex.test(formData.phoneNumber) ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
+                    formSubmitted && !phoneRegex.test(formData.primaryPhone) ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
                   }`}
-                  autoComplete="section-input_5 tel-national"
                   placeholder="(000) 000-0000"
-                  data-component="phone"
-                  aria-labelledby="label_5"
                   required
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  maxLength={14} // Limits input to (###) ###-####
+                  value={formData.primaryPhone}
+                  onChange={(e) => handleChange(e, 'topLevel')}
+                  maxLength={14}
                 />
               </span>
-            </div>
-          </li>
-
-          {/* Email */}
-          <li className="w-full" data-type="control_email">
-            <label className="block text-left text-black" htmlFor="input_6">
-              E-mail
-            </label>
-            <div className="w-full">
-              <span className="inline-block align-top">
-                <input
-                  type="email"
-                  id="input_6"
-                  name="email"
-                  className="border border-[#C3CAD8]/75 rounded p-2 text-base bg-white w-[310px] hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none"
-                  autoComplete="section-input_6 email"
-                  placeholder="ex: email@yahoo.com"
-                  data-component="email"
-                  aria-labelledby="label_6 sublabel_input_6"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-                <label className="text-xs text-[#1a1a1a] min-h-[13px]" htmlFor="input_6">
-                  example@example.com
+              <span>
+                <label className="block text-left text-black" htmlFor="secondaryPhone">
+                  Secondary (if available)
                 </label>
+                <input
+                  type="tel"
+                  id="secondaryPhone"
+                  name="secondaryPhone"
+                  className="border rounded p-2 text-base bg-white w-[310px] hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  placeholder="(000) 000-0000"
+                  value={formData.secondaryPhone}
+                  onChange={(e) => handleChange(e, 'topLevel')}
+                  maxLength={14}
+                />
               </span>
             </div>
           </li>
 
-          {/* Divider */}
-          <li className="w-full" data-type="control_divider">
+          {/* Section 2 - Work History */}
+          <li className="w-full" data-type="control_text">
             <div className="w-full">
-              <div className="border-b border-white h-[1px] my-[5px]"></div>
+              <p className="text-[16pt] font-bold font-arial">SECTION 2 - WORK HISTORY</p>
+              <p className="text-sm text-gray-600">List all the jobs you had in the 5 years before you became unable to work because of your medical conditions:</p>
+              <ul className="list-disc list-inside text-sm text-gray-600">
+                <li>List your most recent job first</li>
+                <li>List all job titles even if they were for the same employer</li>
+                <li>Do not include jobs you held less than 30 calendar days</li>
+                <li>Include self-employment (e.g., rideshare driver, hair stylist)</li>
+                <li>Include work in a foreign country</li>
+              </ul>
             </div>
           </li>
-
-          {/* Divider */}
-          <li className="w-full" data-type="control_divider">
-            <div className="w-full">
-              <div className="border-b border-white h-[1px] my-[5px]"></div>
-            </div>
+          <li className="w-full" data-type="control_matrix">
+            <table className="w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 p-2">Job Title (e.g., Cashier)</th>
+                  <th className="border border-gray-300 p-2">Type of Business (e.g., Grocery Store)</th>
+                  <th className="border border-gray-300 p-2">Dates Worked From (MM/YYYY)</th>
+                  <th className="border border-gray-300 p-2">Dates Worked To (MM/YYYY)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {formData.jobs.map((job, index) => (
+                  <tr key={index}>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        name="title"
+                        className="w-full border-none p-1"
+                        value={job.title}
+                        onChange={(e) => handleChange(e, 'jobs', index)}
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        name="business"
+                        className="w-full border-none p-1"
+                        value={job.business}
+                        onChange={(e) => handleChange(e, 'jobs', index)}
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        name="from"
+                        className="w-full border-none p-1"
+                        placeholder="MM/YYYY"
+                        value={job.from}
+                        onChange={(e) => handleChange(e, 'jobs', index)}
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        name="to"
+                        className="w-full border-none p-1"
+                        placeholder="MM/YYYY"
+                        value={job.to}
+                        onChange={(e) => handleChange(e, 'jobs', index)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </li>
 
-          {/* Submit Button */}
+          {/* Job Details Sections (1-5) */}
+          {formData.jobDetails.map((detail, index) => (
+            <React.Fragment key={index}>
+              <li className="w-full" data-type="control_text">
+                <div className="w-full">
+                  <p className="text-[16pt] font-bold font-arial">Provide more information about Job No. {index + 1} listed in Section 2</p>
+                  <p className="text-sm text-gray-600">Estimate hours and pay, if needed.</p>
+                </div>
+              </li>
+              <li className="w-full" data-type="control_textbox">
+                <label className="block text-left text-black" htmlFor={`jobTitle${index}`}>
+                  JOB TITLE NO. {index + 1}
+                </label>
+                <input
+                  type="text"
+                  id={`jobTitle${index}`}
+                  name="title"
+                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  value={detail.title}
+                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                />
+              </li>
+              <li className="w-full" data-type="control_textbox">
+                <label className="block text-left text-black" htmlFor={`rateOfPay${index}`}>
+                  Rate of Pay
+                </label>
+                <input
+                  type="text"
+                  id={`rateOfPay${index}`}
+                  name="rateOfPay"
+                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  value={detail.rateOfPay}
+                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                />
+              </li>
+              <li className="w-full" data-type="control_radio">
+                <label className="block text-left text-black">Per (Check One):</label>
+                <div className="flex flex-wrap gap-4">
+                  {['Hour', 'Day', 'Week', 'Month', 'Year'].map((option) => (
+                    <label key={option} className="flex items-center">
+                      <input
+                        type="radio"
+                        name="payPeriod"
+                        value={option}
+                        checked={detail.payPeriod === option}
+                        onChange={(e) => handleChange(e, 'jobDetails', index)}
+                        className="mr-2"
+                      />
+                      {option}
+                    </label>
+                  ))}
+                </div>
+              </li>
+              <li className="w-full" data-type="control_textbox">
+                <label className="block text-left text-black" htmlFor={`hoursPerDay${index}`}>
+                  Hours per Day
+                </label>
+                <input
+                  type="text"
+                  id={`hoursPerDay${index}`}
+                  name="hoursPerDay"
+                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  value={detail.hoursPerDay}
+                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                />
+              </li>
+              <li className="w-full" data-type="control_textbox">
+                <label className="block text-left text-black" htmlFor={`daysPerWeek${index}`}>
+                  Days per Week
+                </label>
+                <input
+                  type="text"
+                  id={`daysPerWeek${index}`}
+                  name="daysPerWeek"
+                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  value={detail.daysPerWeek}
+                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                />
+              </li>
+              <li className="w-full" data-type="control_textarea">
+                <label className="block text-left text-black" htmlFor={`tasks${index}`}>
+                  For the job you listed in Job Title No. {index + 1}, describe in detail the tasks you did in a typical workday.
+                </label>
+                <textarea
+                  id={`tasks${index}`}
+                  name="tasks"
+                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  rows="5"
+                  maxLength="525"
+                  value={detail.tasks}
+                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                ></textarea>
+                <p className="text-sm text-gray-500">{detail.tasks.length}/525</p>
+              </li>
+              <li className="w-full" data-type="control_textarea">
+                <label className="block text-left text-black" htmlFor={`reports${index}`}>
+                  If any of the tasks listed above involved writing or completing reports, describe the type of report you wrote or completed and how much time you spent on it per workday or workweek.
+                </label>
+                <textarea
+                  id={`reports${index}`}
+                  name="reports"
+                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  rows="5"
+                  maxLength="425"
+                  value={detail.reports}
+                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                ></textarea>
+                <p className="text-sm text-gray-500">{detail.reports.length}/425</p>
+              </li>
+              <li className="w-full" data-type="control_textarea">
+                <label className="block text-left text-black" htmlFor={`supervision${index}`}>
+                  If any of the tasks listed above involved supervising others, describe who or what you supervised and what supervisory duties you had.
+                </label>
+                <textarea
+                  id={`supervision${index}`}
+                  name="supervision"
+                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  rows="5"
+                  maxLength="425"
+                  value={detail.supervision}
+                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                ></textarea>
+                <p className="text-sm text-gray-500">{detail.supervision.length}/425</p>
+              </li>
+              <li className="w-full" data-type="control_textarea">
+                <label className="block text-left text-black" htmlFor={`tools${index}`}>
+                  List the machines, tools, and equipment you used regularly when doing this job, and explain what you used them for.
+                </label>
+                <textarea
+                  id={`tools${index}`}
+                  name="tools"
+                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  rows="5"
+                  maxLength="425"
+                  value={detail.tools}
+                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                ></textarea>
+                <p className="text-sm text-gray-500">{detail.tools.length}/425</p>
+              </li>
+              <li className="w-full" data-type="control_radio">
+                <label className="block text-left text-black">
+                  Did this job require you to interact with coworkers, the general public, or anyone else?
+                </label>
+                <div className="flex gap-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="interaction"
+                      value="Yes"
+                      checked={detail.interaction === 'Yes'}
+                      onChange={(e) => handleChange(e, 'jobDetails', index)}
+                      className="mr-2"
+                    />
+                    Yes
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="interaction"
+                      value="No"
+                      checked={detail.interaction === 'No'}
+                      onChange={(e) => handleChange(e, 'jobDetails', index)}
+                      className="mr-2"
+                    />
+                    No
+                  </label>
+                </div>
+              </li>
+              {showInteractionDetails[index] && (
+                <li className="w-full" data-type="control_textarea">
+                  <label className="block text-left text-black" htmlFor={`interactionDetails${index}`}>
+                    If YES, describe who you interacted with, the purpose of the interaction, how you interacted, and how much time you spent doing it per workday or workweek.
+                  </label>
+                  <textarea
+                    id={`interactionDetails${index}`}
+                    name="interactionDetails"
+                    className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                    rows="5"
+                    maxLength="525"
+                    value={detail.interactionDetails}
+                    onChange={(e) => handleChange(e, 'jobDetails', index)}
+                  ></textarea>
+                  <p className="text-sm text-gray-500">{detail.interactionDetails.length}/525</p>
+                </li>
+              )}
+              <li className="w-full" data-type="control_matrix">
+                <label className="block text-left text-black">
+                  Tell us how much time you spent doing the following physical activities in a typical workday.
+                </label>
+                <p className="text-sm text-gray-600">
+                  The total hours/minutes for standing, walking, and sitting should equal the Hours per Day. The example below shows an 8-hour workday with 2 hours standing and walking, and 6 hours sitting (8 hours total).
+                </p>
+                <table className="w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border border-gray-300 p-2">Activities</th>
+                      <th className="border border-gray-300 p-2">How much of your workday? (Hours/Minutes)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { key: 'standingWalking', label: 'Standing and walking (combined)' },
+                      { key: 'sitting', label: 'Sitting' },
+                      { key: 'stooping', label: 'Stooping (i.e., bending down & forward at waist)' },
+                      { key: 'kneeling', label: 'Kneeling (i.e., bending legs to rest on knees)' },
+                      { key: 'crouching', label: 'Crouching (i.e., bending legs & back down & forward)' },
+                      { key: 'crawling', label: 'Crawling (i.e., moving on hands and knees)' },
+                      { key: 'climbingStairs', label: 'Climbing stairs or ramps' },
+                      { key: 'climbingLadders', label: 'Climbing ladders, ropes, or scaffolds' },
+                    ].map(({ key, label }) => (
+                      <tr key={key}>
+                        <td className="border border-gray-300 p-2">{label}</td>
+                        <td className="border border-gray-300 p-2">
+                          <input
+                            type="text"
+                            name={`physicalActivities.${key}`}
+                            className="w-full border-none p-1"
+                            value={detail.physicalActivities[key]}
+                            onChange={(e) => handleChange(e, 'jobDetails', index)}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </li>
+              <li className="w-full" data-type="control_matrix">
+                <label className="block text-left text-black">Hand Activities</label>
+                <table className="w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border border-gray-300 p-2">Activities</th>
+                      <th className="border border-gray-300 p-2">One Hand</th>
+                      <th className="border border-gray-300 p-2">Both Hands</th>
+                      <th className="border border-gray-300 p-2">How much of your workday? (Hours/Minutes)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      {
+                        label: 'Using fingers to touch, pick, or pinch (e.g., using a mouse, keyboard, turning pages, or buttoning a shirt)',
+                        oneHandKey: 'fingersOneHand',
+                        bothHandsKey: 'fingersBothHands',
+                        timeKey: 'fingersTime',
+                      },
+                      {
+                        label: 'Using hands to seize, hold, grasp, or turn (e.g., holding a large envelope, a small box, a hammer, or water bottle)',
+                        oneHandKey: 'graspOneHand',
+                        bothHandsKey: 'graspBothHands',
+                        timeKey: 'graspTime',
+                      },
+                    ].map(({ label, oneHandKey, bothHandsKey, timeKey }) => (
+                      <tr key={label}>
+                        <td className="border border-gray-300 p-2">{label}</td>
+                        <td className="border border-gray-300 p-2">
+                          <input
+                            type="checkbox"
+                            name={`handActivities.${oneHandKey}`}
+                            checked={detail.handActivities[oneHandKey]}
+                            onChange={(e) => handleChange(e, 'jobDetails', index)}
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          <input
+                            type="checkbox"
+                            name={`handActivities.${bothHandsKey}`}
+                            checked={detail.handActivities[bothHandsKey]}
+                            onChange={(e) => handleChange(e, 'jobDetails', index)}
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          <input
+                            type="text"
+                            name={`handActivities.${timeKey}`}
+                            className="w-full border-none p-1"
+                            value={detail.handActivities[timeKey]}
+                            onChange={(e) => handleChange(e, 'jobDetails', index)}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </li>
+              <li className="w-full" data-type="control_matrix">
+                <label className="block text-left text-black">Arm Activities</label>
+                <table className="w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border border-gray-300 p-2">Activities</th>
+                      <th className="border border-gray-300 p-2">One Arm</th>
+                      <th className="border border-gray-300 p-2">Both Arms</th>
+                      <th className="border border-gray-300 p-2">How much of your workday? (Hours/Minutes)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      {
+                        label: 'Reaching at or below the shoulder',
+                        oneArmKey: 'reachBelowOneArm',
+                        bothArmsKey: 'reachBelowBothArms',
+                        timeKey: 'reachBelowTime',
+                      },
+                      {
+                        label: 'Reaching overhead (above the shoulder)',
+                        oneArmKey: 'reachOverheadOneArm',
+                        bothArmsKey: 'reachOverheadBothArms',
+                        timeKey: 'reachOverheadTime',
+                      },
+                    ].map(({ label, oneArmKey, bothArmsKey, timeKey }) => (
+                      <tr key={label}>
+                        <td className="border border-gray-300 p-2">{label}</td>
+                        <td className="border border-gray-300 p-2">
+                          <input
+                            type="checkbox"
+                            name={`armActivities.${oneArmKey}`}
+                            checked={detail.armActivities[oneArmKey]}
+                            onChange={(e) => handleChange(e, 'jobDetails', index)}
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          <input
+                            type="checkbox"
+                            name={`armActivities.${bothArmsKey}`}
+                            checked={detail.armActivities[bothArmsKey]}
+                            onChange={(e) => handleChange(e, 'jobDetails', index)}
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          <input
+                            type="text"
+                            name={`armActivities.${timeKey}`}
+                            className="w-full border-none p-1"
+                            value={detail.armActivities[timeKey]}
+                            onChange={(e) => handleChange(e, 'jobDetails', index)}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </li>
+              <li className="w-full" data-type="control_textarea">
+                <label className="block text-left text-black" htmlFor={`liftingCarrying${index}`}>
+                  Tell us about lifting and carrying in this job. Explain what you lifted, how far you carried it, and how often you did it in a typical workday.
+                </label>
+                <textarea
+                  id={`liftingCarrying${index}`}
+                  name="liftingCarrying"
+                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  rows="5"
+                  maxLength="275"
+                  value={detail.liftingCarrying}
+                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                ></textarea>
+                <p className="text-sm text-gray-500">{detail.liftingCarrying.length}/275</p>
+              </li>
+              <li className="w-full" data-type="control_radio">
+                <label className="block text-left text-black">Select the heaviest weight lifted:</label>
+                <div className="flex flex-wrap gap-4">
+                  {['Less than 1 lb.', 'Less than 10 lbs.', '10 lbs.', '20 lbs.', '50 lbs.', '100 lbs. or more', 'Other'].map((option) => (
+                    <label key={option} className="flex items-center">
+                      <input
+                        type="radio"
+                        name="heaviestWeight"
+                        value={option}
+                        checked={detail.heaviestWeight === option}
+                        onChange={(e) => handleChange(e, 'jobDetails', index)}
+                        className="mr-2"
+                      />
+                      {option}
+                    </label>
+                  ))}
+                </div>
+              </li>
+              <li className="w-full" data-type="control_radio">
+                <label className="block text-left text-black">Select the weight frequently lifted (i.e., 1/3 to 2/3 of the workday):</label>
+                <div className="flex flex-wrap gap-4">
+                  {['Less than 1 lb.', 'Less than 10 lbs.', '10 lbs.', '25 lbs.', '50 lbs. or more', 'Other'].map((option) => (
+                    <label key={option} className="flex items-center">
+                      <input
+                        type="radio"
+                        name="frequentWeight"
+                        value={option}
+                        checked={detail.frequentWeight === option}
+                        onChange={(e) => handleChange(e, 'jobDetails', index)}
+                        className="mr-2"
+                      />
+                      {option}
+                    </label>
+                  ))}
+                </div>
+              </li>
+              <li className="w-full" data-type="control_checkbox">
+                <label className="block text-left text-black">Did this job expose you to any of the following? Check all that apply.</label>
+                <div className="flex flex-wrap gap-4">
+                  {[
+                    'Outdoors',
+                    'Extreme heat (non-weather related)',
+                    'Extreme cold (non-weather related)',
+                    'Wetness',
+                    'Humidity',
+                    'Hazardous substances',
+                    'Moving mechanical parts',
+                    'High, exposed places',
+                    'Heavy vibrations',
+                    'Loud noises',
+                    'Other',
+                  ].map((option) => (
+                    <label key={option} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="exposures"
+                        value={option}
+                        checked={detail.exposures.includes(option)}
+                        onChange={(e) => handleChange(e, 'jobDetails', index)}
+                        className="mr-2"
+                      />
+                      {option}
+                    </label>
+                  ))}
+                </div>
+              </li>
+              {detail.exposures.length > 0 && (
+                <li className="w-full" data-type="control_textarea">
+                  <label className="block text-left text-black" htmlFor={`exposureDetails${index}`}>
+                    If one or more boxes are checked, tell us about the exposure(s) and how often you were exposed.
+                  </label>
+                  <textarea
+                    id={`exposureDetails${index}`}
+                    name="exposureDetails"
+                    className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                    rows="5"
+                    maxLength="275"
+                    value={detail.exposureDetails}
+                    onChange={(e) => handleChange(e, 'jobDetails', index)}
+                  ></textarea>
+                  <p className="text-sm text-gray-500">{detail.exposureDetails.length}/275</p>
+                </li>
+              )}
+              <li className="w-full" data-type="control_textarea">
+                <label className="block text-left text-black" htmlFor={`medicalConditions${index}`}>
+                  Explain how your medical conditions would affect your ability to do this job.
+                </label>
+                <textarea
+                  id={`medicalConditions${index}`}
+                  name="medicalConditions"
+                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  rows="5"
+                  maxLength="275"
+                  value={detail.medicalConditions}
+                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                ></textarea>
+                <p className="text-sm text-gray-500">{detail.medicalConditions.length}/275</p>
+              </li>
+            </React.Fragment>
+          ))}
+
+          {/* Section 3 - Remarks */}
+          <li className="w-full" data-type="control_text">
+            <div className="w-full">
+              <p className="text-[16pt] font-bold font-arial">SECTION 3 - REMARKS</p>
+              <p className="text-sm text-gray-600">
+                Please provide any additional information you did not give in earlier parts of this report. If you did not have enough space in the prior sections of this report to provide the requested information, please use this space to provide the additional information requested in those sections. Be sure to include the job title number and question to which you are referring. If you add more jobs than the 5 jobs listed, please provide the same information as you did for job titles numbers 1-5 on a separate sheet of paper(s).
+              </p>
+            </div>
+          </li>
+          <li className="w-full" data-type="control_textarea">
+            <label className="block text-left text-black" htmlFor="remarks">
+              Remarks
+            </label>
+            <textarea
+              id="remarks"
+              name="remarks"
+              className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+              rows="5"
+              maxLength="2000"
+              value={formData.remarks}
+              onChange={(e) => handleChange(e, 'topLevel')}
+            ></textarea>
+            <p className="text-sm text-gray-500">{formData.remarks.length}/2000</p>
+          </li>
+
+          {/* Section 4 - Who is Completing This Report */}
+          <li className="w-full" data-type="control_text">
+            <div className="w-full">
+              <p className="text-[16pt] font-bold font-arial">SECTION 4 - WHO IS COMPLETING THIS REPORT</p>
+            </div>
+          </li>
+          <li className="w-full" data-type="control_textbox">
+            <label className="block text-left text-black" htmlFor="completionDate">
+              Date Report Completed (MM/DD/YYYY) <span className="text-[#f23a3c]">*</span>
+            </label>
+            <input
+              type="text"
+              id="completionDate"
+              name="completionDate"
+              className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
+                formSubmitted && !formData.completionDate ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
+              }`}
+              placeholder="MM/DD/YYYY"
+              required
+              value={formData.completionDate}
+              onChange={(e) => handleChange(e, 'topLevel')}
+            />
+          </li>
+          <li className="w-full" data-type="control_radio">
+            <label className="block text-left text-black">Who is completing this report? <span className="text-[#f23a3c]">*</span></label>
+            <div className="flex gap-4">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="completer"
+                  value="person"
+                  checked={formData.completer === 'person'}
+                  onChange={(e) => handleChange(e, 'topLevel')}
+                  className="mr-2"
+                />
+                The person listed in 1.A.
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="completer"
+                  value="someone-else"
+                  checked={formData.completer === 'someone-else'}
+                  onChange={(e) => handleChange(e, 'topLevel')}
+                  className="mr-2"
+                />
+                Someone else (Complete the information below)
+              </label>
+            </div>
+          </li>
+          <li className="w-full" data-type="control_textbox">
+            <label className="block text-left text-black" htmlFor="completerName">
+              NAME <span className="text-[#f23a3c]">*</span>
+            </label>
+            <input
+              type="text"
+              id="completerName"
+              name="completerName"
+              className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
+                formSubmitted && !formData.completerName ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
+              }`}
+              required
+              value={formData.completerName}
+              onChange={(e) => handleChange(e, 'topLevel')}
+            />
+          </li>
+          <li className="w-full" data-type="control_textbox">
+            <label className="block text-left text-black" htmlFor="completerRelationship">
+              Relationship to the Person in 1.A. <span className="text-[#f23a3c]">*</span>
+            </label>
+            <input
+              type="text"
+              id="completerRelationship"
+              name="completerRelationship"
+              className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
+                formSubmitted && !formData.completerRelationship ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
+              }`}
+              required
+              value={formData.completerRelationship}
+              onChange={(e) => handleChange(e, 'topLevel')}
+            />
+          </li>
+          <li className="w-full" data-type="control_address">
+            <label className="block text-left text-black">
+              MAILING ADDRESS (Street or PO Box) Include the apartment number, if applicable. <span className="text-[#f23a3c]">*</span>
+            </label>
+            <div className="flex flex-col gap-2.5">
+              <input
+                type="text"
+                name="street"
+                className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
+                  formSubmitted && !formData.address.street ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
+                }`}
+                placeholder="Street Address"
+                required
+                value={formData.address.street}
+                onChange={(e) => handleChange(e, 'address')}
+              />
+              <input
+                type="text"
+                name="street2"
+                className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                placeholder="Street Address Line 2"
+                value={formData.address.street2}
+                onChange={(e) => handleChange(e, 'address')}
+              />
+              <div className="flex gap-2.5">
+                <input
+                  type="text"
+                  name="city"
+                  className="border rounded p-2 text-base bg-white w-1/2 hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  placeholder="City"
+                  value={formData.address.city}
+                  onChange={(e) => handleChange(e, 'address')}
+                />
+                <input
+                  type="text"
+                  name="state"
+                  className="border rounded p-2 text-base bg-white w-1/2 hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  placeholder="State / Province"
+                  value={formData.address.state}
+                  onChange={(e) => handleChange(e, 'address')}
+                />
+              </div>
+              <div className="flex gap-2.5">
+                <input
+                  type="text"
+                  name="zip"
+                  className="border rounded p-2 text-base bg-white w-1/2 hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  placeholder="Postal / Zip Code"
+                  value={formData.address.zip}
+                  onChange={(e) => handleChange(e, 'address')}
+                />
+                <select
+                  name="country"
+                  className="border rounded p-2 text-base bg-white w-1/2 hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
+                  value={formData.address.country}
+                  onChange={(e) => handleChange(e, 'address')}
+                >
+                  <option>Please Select</option>
+                  <option>Afghanistan</option>
+                  <option>Albania</option>
+                  <option>Algeria</option>
+                  <option>American Samoa</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+          </li>
+          <li className="w-full" data-type="control_phone">
+            <label className="block text-left text-black" htmlFor="completerPhone">
+              DAYTIME PHONE NUMBER where we may reach you or leave a message, if needed. Include the area code or IDD and country code if outside the USA or Canada. <span className="text-[#f23a3c]">*</span>
+            </label>
+            <input
+              type="tel"
+              id="completerPhone"
+              name="completerPhone"
+              className={`border rounded p-2 text-base bg-white w-[310px] hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
+                formSubmitted && !phoneRegex.test(formData.completerPhone) ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
+              }`}
+              placeholder="(000) 000-0000"
+              required
+              value={formData.completerPhone}
+              onChange={(e) => handleChange(e, 'topLevel')}
+              maxLength={14}
+            />
+          </li>
+
+          {/* Buttons */}
           <li className="w-full" data-type="control_button">
-            <div className="w-full text-center">
+            <div className="w-full flex justify-between">
               <button
-                type="submit"
-                className="bg-[#18BD5B] border border-[#18BD5B] text-white min-w-[180px] text-base py-2.5 px-4 rounded cursor-pointer hover:bg-[#16AA52] hover:border-[#16AA52]"
+                type="button"
+                className="bg-gray-300 text-gray-700 px-4 py-2.5 rounded cursor-pointer hover:bg-gray-400"
                 data-component="button"
               >
-                Submit
+                Back
               </button>
+              <div>
+                <button
+                  type="button"
+                  className="bg-blue-500 text-white px-4 py-2.5 rounded cursor-pointer hover:bg-blue-600 mr-2"
+                  data-component="button"
+                >
+                  Preview PDF
+                </button>
+                <button
+                  type="submit"
+                  className="bg-[#18BD5B] border border-[#18BD5B] text-white min-w-[180px] px-4 py-2.5 rounded cursor-pointer hover:bg-[#16AA52] hover:border-[#16AA52]"
+                  data-component="button"
+                >
+                  Submit
+                </button>
+              </div>
             </div>
           </li>
 
           {/* Hidden Anti-Spam Field */}
           <li className="hidden">
-            Should be Empty: <input type="text" name="website" value={formData.website} onChange={handleChange} />
+            Should be Empty: <input
+              type="text"
+              name="website"
+              value={formData.website}
+              onChange={(e) => handleChange(e, 'topLevel')}
+            />
           </li>
-
-          {/* Mock Conditional Field (for q8 and q9) */}
-          {showConditionalField && (
-            <li className="w-full" data-type="control_text">
-              <div className="w-full">
-                <p>Conditional Field (Triggered by Other)</p>
-              </div>
-            </li>
-          )}
         </ul>
       </form>
     </div>
-    
   );
 };
 
 export default WorkHistoryReport;
-
-
