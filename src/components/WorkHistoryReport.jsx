@@ -808,13 +808,13 @@ const WorkHistoryReport = () => {
     q327_primary327: '(555) 123-4567',
     q328_secondaryif328: '(555) 987-6543',
     
-    // Section 2 - Work History (Matrix)
+    // Section 2 - Work History (Matrix) - 5 jobs
     q197_jobs: [
       ['Cashier', 'Grocery Store', '01/2020', '06/2022'],
       ['Warehouse Associate', 'Retail Distribution', '07/2018', '12/2019'],
       ['Customer Service Rep', 'Telecommunications', '03/2017', '06/2018'],
-      ['', '', '', ''],
-      ['', '', '', ''],
+      ['Delivery Driver', 'Logistics Company', '09/2016', '02/2017'],
+      ['Retail Sales', 'Clothing Store', '04/2015', '08/2016'],
       ['', '', '', ''],
       ['', '', '', ''],
       ['', '', '', ''],
@@ -834,14 +834,58 @@ const WorkHistoryReport = () => {
     q207_listThe: 'Used cash register (POS system), barcode scanner, and credit card terminal daily.',
     q209_didThis: ['Yes'],
     q208_listThe208: 'Interacted with customers for about 7 hours per day, answering questions about products and processing purchases.',
-    
-    // Physical Activities for Job 1
     q340_activities340: [
       ['6 hours'], // Standing and walking
       ['2 hours'], // Sitting
       ['3 hours'], // Stooping
       ['30 minutes'], // Kneeling
       ['1 hour'], // Crouching
+      ['None'], // Crawling
+      ['15 minutes'], // Climbing stairs
+      ['None'] // Climbing ladders
+    ],
+    
+    // Job 2 Details
+    q221_jobTitle221: 'Warehouse Associate',
+    q222_rateOf222: '18.00',
+    q223_percheck223: ['Hour'],
+    q224_hoursPer224: '10',
+    q225_daysPer225: '4',
+    q226_forThe226: 'Managed inventory, operated forklift, loaded/unloaded trucks, and ensured warehouse organization.',
+    q227_ifAny227: 'Prepared weekly inventory reports, taking approximately 1 hour per week.',
+    q228_ifAny228: 'No supervisory duties assigned.',
+    q229_listThe229: 'Used forklift, pallet jack, and handheld scanner for inventory management.',
+    q230_didThis230: ['Yes'],
+    q231_ifYes: 'Interacted with shipping personnel for about 3 hours per day to coordinate deliveries.',
+    q277_activities277: [
+      ['4 hours'], // Standing and walking
+      ['6 hours'], // Sitting
+      ['2 hours'], // Stooping
+      ['1 hour'], // Kneeling
+      ['30 minutes'], // Crouching
+      ['None'], // Crawling
+      ['45 minutes'], // Climbing stairs
+      ['15 minutes'] // Climbing ladders
+    ],
+    
+    // Job 3 Details
+    q243_jobTitle243: 'Customer Service Rep',
+    q244_rateOf244: '16.75',
+    q245_percheck245: ['Day'],
+    q246_hoursPer246: '7',
+    q247_daysPer247: '5',
+    q248_forThe248: 'Handled customer inquiries, processed orders, resolved complaints, and updated account records.',
+    q249_ifAny249: 'Completed call logs and customer feedback reports, taking about 1 hour per day.',
+    q250_ifAny250: 'No supervisory responsibilities.',
+    q251_listThe251: 'Used telephone system, computer with CRM software, and headset daily.',
+    q252_didThis252: ['Yes'],
+    q253_ifYes253: 'Interacted with customers via phone for approximately 5 hours per day.',
+    q255_activities255: [
+      ['2 hours'], // Standing and walking
+      ['5 hours'], // Sitting
+      ['1 hour'], // Stooping
+      ['None'], // Kneeling
+      ['30 minutes'], // Crouching
       ['None'], // Crawling
       ['15 minutes'], // Climbing stairs
       ['None'] // Climbing ladders
