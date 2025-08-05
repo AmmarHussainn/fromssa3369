@@ -797,1208 +797,774 @@
 
 // export default WorkHistoryReport;
 
-
-
-
-import React, { useState, useEffect } from 'react';
+import React, { useState }  from 'react';
 
 const WorkHistoryReport = () => {
+   // State for form data
   const [formData, setFormData] = useState({
-    name: '',
-    ssn: '',
-    primaryPhone: '',
-    secondaryPhone: '',
-    jobs: Array(10).fill({ title: '', business: '', from: '', to: '' }),
-    jobDetails: Array(5).fill({
-      title: '',
-      rateOfPay: '',
-      payPeriod: '',
-      hoursPerDay: '',
-      daysPerWeek: '',
-      tasks: '',
-      reports: '',
-      supervision: '',
-      tools: '',
-      interaction: '',
-      interactionDetails: '',
-      physicalActivities: {
-        standingWalking: '',
-        sitting: '',
-        stooping: '',
-        kneeling: '',
-        crouching: '',
-        crawling: '',
-        climbingStairs: '',
-        climbingLadders: '',
-      },
-      handActivities: {
-        fingersOneHand: false,
-        fingersBothHands: false,
-        fingersTime: '',
-        graspOneHand: false,
-        graspBothHands: false,
-        graspTime: '',
-      },
-      armActivities: {
-        reachBelowOneArm: false,
-        reachBelowBothArms: false,
-        reachBelowTime: '',
-        reachOverheadOneArm: false,
-        reachOverheadBothArms: false,
-        reachOverheadTime: '',
-      },
-      liftingCarrying: '',
-      heaviestWeight: '',
-      frequentWeight: '',
-      exposures: [],
-      exposureDetails: '',
-      medicalConditions: '',
-    }),
-    remarks: '',
-    completionDate: '',
-    completer: '',
-    completerName: '',
-    completerRelationship: '',
-    address: {
-      street: '',
-      street2: '',
-      city: '',
-      state: '',
-      zip: '',
-      country: '',
+    // Section 1 - Information About You
+    q190_name: 'John A. Doe Jr.',
+    q326_socialSecurity: '123-45-6789',
+    q327_primary327: '(555) 123-4567',
+    q328_secondaryif328: '(555) 987-6543',
+    
+    // Section 2 - Work History (Matrix)
+    q197_jobs: [
+      ['Cashier', 'Grocery Store', '01/2020', '06/2022'],
+      ['Warehouse Associate', 'Retail Distribution', '07/2018', '12/2019'],
+      ['Customer Service Rep', 'Telecommunications', '03/2017', '06/2018'],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      ['', '', '', '']
+    ],
+    
+    // Job 1 Details
+    q199_jobTitle: 'Cashier',
+    q330_rateOf330: '15.50',
+    q331_percheck331: ['Hour'],
+    q332_hoursPer332: '8',
+    q333_daysPer333: '5',
+    q334_forThe334: 'Processed customer transactions, handled cash register, provided customer service, restocked shelves, and maintained clean work area.',
+    q335_ifAny335: 'Completed daily sales reports which took about 30 minutes per shift.',
+    q206_ifAny206: 'Supervised 2-3 baggers during shifts, assigned tasks, and provided training to new employees.',
+    q207_listThe: 'Used cash register (POS system), barcode scanner, and credit card terminal daily.',
+    q209_didThis: ['Yes'],
+    q208_listThe208: 'Interacted with customers for about 7 hours per day, answering questions about products and processing purchases.',
+    
+    // Physical Activities for Job 1
+    q340_activities340: [
+      ['6 hours'], // Standing and walking
+      ['2 hours'], // Sitting
+      ['3 hours'], // Stooping
+      ['30 minutes'], // Kneeling
+      ['1 hour'], // Crouching
+      ['None'], // Crawling
+      ['15 minutes'], // Climbing stairs
+      ['None'] // Climbing ladders
+    ],
+    
+    // Section 3 - Remarks
+    q313_typeA: 'No additional remarks at this time.',
+    
+    // Section 4 - Who is Completing This Report
+    q315_dateReport: new Date().toLocaleDateString('en-US'),
+    q316_whoIs: ['Myself'],
+    q317_name317: 'John A. Doe Jr.',
+    q318_name318: 'Self',
+    q319_mailingAddress: {
+      addr_line1: '123 Main St',
+      addr_line2: 'Apt 4B',
+      city: 'Anytown',
+      state: 'CA',
+      postal: '90210',
+      country: 'United States'
     },
-    completerPhone: '',
-    formID: '252154456278462',
-    simple_spc: '252154456278462-252154456278462',
-    jsExecutionTracker: 'build-date-1754323901292',
-    submitSource: 'unknown',
-    submitDate: 'undefined',
-    buildDate: '1754323901292',
-    uploadServerUrl: 'https://upload.jotform.com/upload',
-    eventObserver: '1',
-    website: '', // Anti-spam field
+    q320_daytimePhone: '(555) 123-4567'
   });
 
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [showInteractionDetails, setShowInteractionDetails] = useState(Array(5).fill(false));
-
-  // Custom phone number formatter
-  const formatPhoneNumber = (value) => {
-    const digits = value.replace(/\D/g, '');
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
-  };
-
-  // Handle input changes
-  const handleChange = (e, section, index) => {
+  const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-
-    if (section === 'topLevel') {
-      if (name === 'primaryPhone' || name === 'secondaryPhone' || name === 'completerPhone') {
-        const formattedValue = formatPhoneNumber(value);
-        setFormData((prev) => ({ ...prev, [name]: formattedValue }));
+    
+    if (type === 'checkbox') {
+      const currentValues = [...formData[name] || []];
+      if (checked) {
+        currentValues.push(value);
       } else {
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const index = currentValues.indexOf(value);
+        if (index > -1) {
+          currentValues.splice(index, 1);
+        }
       }
-    } else if (section === 'jobs') {
-      setFormData((prev) => ({
-        ...prev,
-        jobs: prev.jobs.map((job, i) =>
-          i === index ? { ...job, [name]: value } : job
-        ),
-      }));
-    } else if (section === 'jobDetails') {
-      if (name === 'interaction') {
-        setShowInteractionDetails((prev) =>
-          prev.map((show, i) => (i === index ? value === 'Yes' : show))
-        );
-      }
-      if (type === 'checkbox') {
-        setFormData((prev) => ({
-          ...prev,
-          jobDetails: prev.jobDetails.map((detail, i) =>
-            i === index
-              ? {
-                  ...detail,
-                  exposures: checked
-                    ? [...detail.exposures, value]
-                    : detail.exposures.filter((exp) => exp !== value),
-                }
-              : detail
-          ),
-        }));
-      } else if (name.includes('physicalActivities')) {
-        const activity = name.split('.')[1];
-        setFormData((prev) => ({
-          ...prev,
-          jobDetails: prev.jobDetails.map((detail, i) =>
-            i === index
-              ? { ...detail, physicalActivities: { ...detail.physicalActivities, [activity]: value } }
-              : detail
-          ),
-        }));
-      } else if (name.includes('handActivities')) {
-        const [field, subField] = name.split('.');
-        setFormData((prev) => ({
-          ...prev,
-          jobDetails: prev.jobDetails.map((detail, i) =>
-            i === index
-              ? {
-                  ...detail,
-                  handActivities: {
-                    ...detail.handActivities,
-                    [subField]: type === 'checkbox' ? checked : value,
-                  },
-                }
-              : detail
-          ),
-        }));
-      } else if (name.includes('armActivities')) {
-        const [field, subField] = name.split('.');
-        setFormData((prev) => ({
-          ...prev,
-          jobDetails: prev.jobDetails.map((detail, i) =>
-            i === index
-              ? {
-                  ...detail,
-                  armActivities: {
-                    ...detail.armActivities,
-                    [subField]: type === 'checkbox' ? checked : value,
-                  },
-                }
-              : detail
-          ),
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          jobDetails: prev.jobDetails.map((detail, i) =>
-            i === index ? { ...detail, [name]: value } : detail
-          ),
-        }));
-      }
-    } else if (section === 'address') {
-      setFormData((prev) => ({
-        ...prev,
-        address: { ...prev.address, [name]: value },
-      }));
+      setFormData({ ...formData, [name]: currentValues });
+    } else {
+      setFormData({ ...formData, [name]: value });
     }
   };
 
-  // Handle form submission
+  const handleMatrixChange = (section, row, col, value) => {
+    const updatedMatrix = [...formData[section]];
+    updatedMatrix[row][col] = value;
+    setFormData({ ...formData, [section]: updatedMatrix });
+  };
+
+  const handleAddressChange = (field, value) => {
+    setFormData({
+      ...formData,
+      q319_mailingAddress: {
+        ...formData.q319_mailingAddress,
+        [field]: value
+      }
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormSubmitted(true);
-
-    // Validate required fields
-    const requiredFields = [
-      { field: formData.name, name: 'Name' },
-      { field: formData.ssn, name: 'Social Security Number' },
-      { field: formData.primaryPhone, name: 'Primary Phone Number' },
-      { field: formData.completionDate, name: 'Completion Date' },
-      { field: formData.completer, name: 'Who is completing this report' },
-      { field: formData.completerName, name: 'Completer Name' },
-      { field: formData.completerRelationship, name: 'Relationship to Person' },
-      { field: formData.address.street, name: 'Street Address' },
-      { field: formData.completerPhone, name: 'Completer Phone Number' },
-    ];
-
-    for (const { field, name } of requiredFields) {
-      if (!field) {
-        alert(`There are incomplete required fields. Please complete ${name}.`);
-        return;
+    
+    // Prepare the form data for submission
+    const submissionData = new FormData();
+    
+    // Add all form fields to the submission data
+    Object.entries(formData).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(val => submissionData.append(key, val));
+      } else if (typeof value === 'object' && value !== null) {
+        Object.entries(value).forEach(([subKey, subValue]) => {
+          submissionData.append(`${key}[${subKey}]`, subValue);
+        });
+      } else {
+        submissionData.append(key, value);
       }
-    }
-
-    // Validate phone number format
-    const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
-    if (!phoneRegex.test(formData.primaryPhone)) {
-      alert('Please enter a valid primary phone number in the format (###) ###-####.');
-      return;
-    }
-    if (formData.secondaryPhone && !phoneRegex.test(formData.secondaryPhone)) {
-      alert('Please enter a valid secondary phone number in the format (###) ###-####.');
-      return;
-    }
-    if (!phoneRegex.test(formData.completerPhone)) {
-      alert('Please enter a valid completer phone number in the format (###) ###-####.');
-      return;
-    }
-
-    // Prepare form data for JotForm
-    const submissionData = {
-      'q1_name': formData.name,
-      'q2_ssn': formData.ssn,
-      'q3_phoneNumber[primary]': formData.primaryPhone,
-      'q3_phoneNumber[secondary]': formData.secondaryPhone,
-      ...formData.jobs.reduce((acc, job, index) => ({
-        ...acc,
-        [`q4_jobs[${index}][title]`]: job.title,
-        [`q4_jobs[${index}][business]`]: job.business,
-        [`q4_jobs[${index}][from]`]: job.from,
-        [`q4_jobs[${index}][to]`]: job.to,
-      }), {}),
-      ...formData.jobDetails.reduce((acc, detail, index) => ({
-        ...acc,
-        [`q5_jobDetails[${index}][title]`]: detail.title,
-        [`q5_jobDetails[${index}][rateOfPay]`]: detail.rateOfPay,
-        [`q5_jobDetails[${index}][payPeriod]`]: detail.payPeriod,
-        [`q5_jobDetails[${index}][hoursPerDay]`]: detail.hoursPerDay,
-        [`q5_jobDetails[${index}][daysPerWeek]`]: detail.daysPerWeek,
-        [`q5_jobDetails[${index}][tasks]`]: detail.tasks,
-        [`q5_jobDetails[${index}][reports]`]: detail.reports,
-        [`q5_jobDetails[${index}][supervision]`]: detail.supervision,
-        [`q5_jobDetails[${index}][tools]`]: detail.tools,
-        [`q5_jobDetails[${index}][interaction]`]: detail.interaction,
-        [`q5_jobDetails[${index}][interactionDetails]`]: detail.interactionDetails,
-        ...Object.entries(detail.physicalActivities).reduce((actAcc, [key, value]) => ({
-          ...actAcc,
-          [`q5_jobDetails[${index}][physicalActivities][${key}]`]: value,
-        }), {}),
-        ...Object.entries(detail.handActivities).reduce((actAcc, [key, value]) => ({
-          ...actAcc,
-          [`q5_jobDetails[${index}][handActivities][${key}]`]: value,
-        }), {}),
-        ...Object.entries(detail.armActivities).reduce((actAcc, [key, value]) => ({
-          ...actAcc,
-          [`q5_jobDetails[${index}][armActivities][${key}]`]: value,
-        }), {}),
-        [`q5_jobDetails[${index}][liftingCarrying]`]: detail.liftingCarrying,
-        [`q5_jobDetails[${index}][heaviestWeight]`]: detail.heaviestWeight,
-        [`q5_jobDetails[${index}][frequentWeight]`]: detail.frequentWeight,
-        [`q5_jobDetails[${index}][exposures]`]: detail.exposures.join(','),
-        [`q5_jobDetails[${index}][exposureDetails]`]: detail.exposureDetails,
-        [`q5_jobDetails[${index}][medicalConditions]`]: detail.medicalConditions,
-      }), {}),
-      'q6_remarks': formData.remarks,
-      'q7_completionDate': formData.completionDate,
-      'q8_completer': formData.completer,
-      'q9_completerName': formData.completerName,
-      'q10_completerRelationship': formData.completerRelationship,
-      'q11_address[street]': formData.address.street,
-      'q11_address[street2]': formData.address.street2,
-      'q11_address[city]': formData.address.city,
-      'q11_address[state]': formData.address.state,
-      'q11_address[zip]': formData.address.zip,
-      'q11_address[country]': formData.address.country,
-      'q12_completerPhone': formData.completerPhone,
-      formID: formData.formID,
-      simple_spc: formData.simple_spc,
-      jsExecutionTracker: formData.jsExecutionTracker,
-      submitSource: formData.submitSource,
-      submitDate: formData.submitDate,
-      buildDate: formData.buildDate,
-      uploadServerUrl: formData.uploadServerUrl,
-      eventObserver: formData.eventObserver,
-      website: formData.website,
-    };
-
-    try {
-      const response = await fetch('https://submit.jotform.com/submit/252154456278462', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(submissionData).toString(),
+    });
+    
+    // Add matrix data
+    formData.q197_jobs.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        submissionData.append(`q197_jobs[${rowIndex}][${colIndex}]`, cell);
       });
-
+    });
+    
+    formData.q340_activities340.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        submissionData.append(`q340_activities340[${rowIndex}][${colIndex}]`, cell);
+      });
+    });
+    
+    // Add matrix row/col IDs
+    submissionData.append('q197_jobs[colIds]', '["0","1","2","3"]');
+    submissionData.append('q197_jobs[rowIds]', '["0","1","2","3","4","5","6","7","8","9"]');
+    submissionData.append('q340_activities340[colIds]', '["0"]');
+    submissionData.append('q340_activities340[rowIds]', '["0","1","2","3","4","5","6","7"]');
+    
+    // Add hidden fields from the original form
+    submissionData.append('formID', '241841575846062');
+    submissionData.append('submitSource', 'react-component');
+    submissionData.append('buildDate', Date.now());
+    
+    try {
+      const response = await fetch('https://submit.jotform.com/submit/241841575846062', {
+        method: 'POST',
+        body: submissionData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
       if (response.ok) {
         alert('Form submitted successfully!');
+        // You can redirect or reset the form here if needed
       } else {
-        alert('Submission failed. Please try again.');
+        throw new Error('Form submission failed');
       }
     } catch (error) {
-      alert('Error submitting form: ' + error.message);
+      console.error('Submission error:', error);
+      alert('There was an error submitting the form. Please try again.');
     }
   };
 
-  // Set simple_spc on mount
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      simple_spc: '252154456278462-252154456278462',
-    }));
-  }, []);
-
   return (
-    <div className="min-h-screen bg-[#F3F3FE]">
-      <form
-        className="max-w-[700px] mx-auto bg-white rounded-[20px] p-0 font-inter text-base text-black"
-        onSubmit={handleSubmit}
-        action="https://submit.jotform.com/submit/252154456278462"
-        method="post"
-        name="form_252154456278462"
-        id="252154456278462"
-        acceptCharset="utf-8"
-        autoComplete="on"
-      >
-        {/* Hidden Inputs */}
-        <input type="hidden" name="formID" value={formData.formID} />
-        <input type="hidden" id="JWTContainer" name="JWTContainer" value="" />
-        <input type="hidden" id="cardinalOrderNumber" name="cardinalOrderNumber" value="" />
-        <input type="hidden" id="jsExecutionTracker" name="jsExecutionTracker" value={formData.jsExecutionTracker} />
-        <input type="hidden" id="submitSource" name="submitSource" value={formData.submitSource} />
-        <input type="hidden" id="submitDate" name="submitDate" value={formData.submitDate} />
-        <input type="hidden" id="buildDate" name="buildDate" value={formData.buildDate} />
-        <input type="hidden" name="uploadServerUrl" value={formData.uploadServerUrl} />
-        <input type="hidden" name="eventObserver" value={formData.eventObserver} />
-        <input type="hidden" name="website" value={formData.website} />
-        <input type="hidden" className="simple_spc" id="simple_spc" name="simple_spc" value={formData.simple_spc} />
-
-        <ul className="list-none p-0 px-[38px]" role="presentation">
-          {/* Header */}
-          <li className="w-full" data-type="control_head">
-            <div className="my-0 px-[52px] py-[40px]">
-              <h1 className="text-2xl text-black font-normal">WORK HISTORY REPORT</h1>
-              <p className="text-sm text-gray-600">
-                Anyone who makes or causes to be made a false statement or representation of material fact for use in determining a payment under the Social Security Act, or knowingly conceals or fails to disclose an event with an intent to affect an initial or continued right to payment, commits a crime punishable under Federal law by fine, imprisonment, or both, and may be subject to administrative sanctions.
-              </p>
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Section 1 - Information About You */}
+        <div className="border-b border-gray-200 pb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">SECTION 1 - INFORMATION ABOUT YOU</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Name */}
+            <div className="mb-4">
+              <label htmlFor="q190_name" className="block text-sm font-medium text-gray-700 mb-1">
+                NAME <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="q190_name"
+                name="q190_name"
+                value={formData.q190_name}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="First, Middle Initial, Last, Suffix"
+                required
+              />
             </div>
-          </li>
-
-          {/* Section 1 - Information About You */}
-          <li className="w-full" data-type="control_text">
-            <div className="w-full">
-              <p className="text-[16pt] font-bold font-arial">SECTION 1 - INFORMATION ABOUT YOU</p>
-              <p className="text-sm text-gray-600">When a question refers to "you" or "your," it refers to the person who is applying for disability benefits. If you are completing this report for someone else, provide information about them.</p>
+            
+            {/* Social Security Number */}
+            <div className="mb-4">
+              <label htmlFor="q326_socialSecurity" className="block text-sm font-medium text-gray-700 mb-1">
+                SOCIAL SECURITY NUMBER <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="q326_socialSecurity"
+                name="q326_socialSecurity"
+                value={formData.q326_socialSecurity}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="###-##-####"
+                required
+              />
             </div>
-          </li>
-          <li className="w-full" data-type="control_textbox">
-            <label className="block text-left text-black" htmlFor="name">
-              NAME <span className="text-[#f23a3c]">*</span>
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                formSubmitted && !formData.name ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
-              }`}
-              required
-              value={formData.name}
-              onChange={(e) => handleChange(e, 'topLevel')}
-            />
-          </li>
-          <li className="w-full" data-type="control_textbox">
-            <label className="block text-left text-black" htmlFor="ssn">
-              SOCIAL SECURITY NUMBER <span className="text-[#f23a3c]">*</span>
-            </label>
-            <input
-              type="text"
-              id="ssn"
-              name="ssn"
-              className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                formSubmitted && !formData.ssn ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
-              }`}
-              required
-              value={formData.ssn}
-              onChange={(e) => handleChange(e, 'topLevel')}
-            />
-          </li>
-          <li className="w-full" data-type="control_phone">
-            <label className="block text-left text-black">
-              DAYTIME PHONE NUMBER(S) where we can call to speak with you or leave a message, if needed. Include area code or IDD and country code if outside the USA or Canada.
-            </label>
-            <div className="w-full flex flex-col gap-2.5">
-              <span>
-                <label className="block text-left text-black" htmlFor="primaryPhone">
-                  Primary <span className="text-[#f23a3c]">*</span>
+          </div>
+          
+          <div className="mt-4">
+            <p className="text-sm text-gray-600 mb-2">
+              DAYTIME PHONE NUMBER(S) where we can call to speak with you or leave a message, if needed. 
+              Include area code or IDD and country code if outside the USA or Canada.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Primary Phone */}
+              <div className="mb-4">
+                <label htmlFor="q327_primary327" className="block text-sm font-medium text-gray-700 mb-1">
+                  Primary: <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
-                  id="primaryPhone"
-                  name="primaryPhone"
-                  className={`border rounded p-2 text-base bg-white w-[310px] hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                    formSubmitted && !phoneRegex.test(formData.primaryPhone) ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
-                  }`}
-                  placeholder="(000) 000-0000"
+                  id="q327_primary327"
+                  name="q327_primary327"
+                  value={formData.q327_primary327}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="(###) ###-####"
                   required
-                  value={formData.primaryPhone}
-                  onChange={(e) => handleChange(e, 'topLevel')}
-                  maxLength={14}
                 />
-              </span>
-              <span>
-                <label className="block text-left text-black" htmlFor="secondaryPhone">
-                  Secondary (if available)
+              </div>
+              
+              {/* Secondary Phone */}
+              <div className="mb-4">
+                <label htmlFor="q328_secondaryif328" className="block text-sm font-medium text-gray-700 mb-1">
+                  Secondary: (if available)
                 </label>
                 <input
                   type="tel"
-                  id="secondaryPhone"
-                  name="secondaryPhone"
-                  className="border rounded p-2 text-base bg-white w-[310px] hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  placeholder="(000) 000-0000"
-                  value={formData.secondaryPhone}
-                  onChange={(e) => handleChange(e, 'topLevel')}
-                  maxLength={14}
+                  id="q328_secondaryif328"
+                  name="q328_secondaryif328"
+                  value={formData.q328_secondaryif328}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="(###) ###-####"
                 />
-              </span>
+              </div>
             </div>
-          </li>
-
-          {/* Section 2 - Work History */}
-          <li className="w-full" data-type="control_text">
-            <div className="w-full">
-              <p className="text-[16pt] font-bold font-arial">SECTION 2 - WORK HISTORY</p>
-              <p className="text-sm text-gray-600">List all the jobs you had in the 5 years before you became unable to work because of your medical conditions:</p>
-              <ul className="list-disc list-inside text-sm text-gray-600">
-                <li>List your most recent job first</li>
-                <li>List all job titles even if they were for the same employer</li>
-                <li>Do not include jobs you held less than 30 calendar days</li>
-                <li>Include self-employment (e.g., rideshare driver, hair stylist)</li>
-                <li>Include work in a foreign country</li>
-              </ul>
-            </div>
-          </li>
-          <li className="w-full" data-type="control_matrix">
-            <table className="w-full border-collapse border border-gray-300">
+          </div>
+        </div>
+        
+        {/* Section 2 - Work History */}
+        <div className="border-b border-gray-200 pb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">SECTION 2 - WORK HISTORY</h2>
+          
+          <p className="text-sm text-gray-600 mb-4">
+            List all the jobs you had in the <strong>5 years before you became unable to work</strong> because of your medical conditions:
+          </p>
+          
+          <ul className="list-disc pl-5 text-sm text-gray-600 mb-4 space-y-1">
+            <li>List your most recent job first</li>
+            <li>List all job titles even if they were for the same employer</li>
+            <li><strong>Do not include jobs you held less than 30 calendar days</strong></li>
+            <li>Include self-employment (e.g., rideshare driver, hair stylist)</li>
+            <li>Include work in a foreign country</li>
+          </ul>
+          
+          {/* Jobs Matrix */}
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-200">
               <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-300 p-2">Job Title (e.g., Cashier)</th>
-                  <th className="border border-gray-300 p-2">Type of Business (e.g., Grocery Store)</th>
-                  <th className="border border-gray-300 p-2">Dates Worked From (MM/YYYY)</th>
-                  <th className="border border-gray-300 p-2">Dates Worked To (MM/YYYY)</th>
+                <tr className="bg-blue-600 text-white">
+                  <th className="px-4 py-2 border border-gray-300"></th>
+                  <th className="px-4 py-2 border border-gray-300">
+                    <label className="block font-normal">
+                      <b>Job Title</b><br />(e.g., Cashier)
+                    </label>
+                  </th>
+                  <th className="px-4 py-2 border border-gray-300">
+                    <label className="block font-normal">
+                      <b>Type of Business</b><br />(e.g., Grocery Store)
+                    </label>
+                  </th>
+                  <th className="px-4 py-2 border border-gray-300">
+                    <label className="block font-normal">
+                      <b>Dates Worked From</b><br />(MM/YYYY)
+                    </label>
+                  </th>
+                  <th className="px-4 py-2 border border-gray-300">
+                    <label className="block font-normal">
+                      <b>Dates Worked To</b><br />(MM/YYYY)
+                    </label>
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {formData.jobs.map((job, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-300 p-2">
-                      <input
-                        type="text"
-                        name="title"
-                        className="w-full border-none p-1"
-                        value={job.title}
-                        onChange={(e) => handleChange(e, 'jobs', index)}
-                      />
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      <input
-                        type="text"
-                        name="business"
-                        className="w-full border-none p-1"
-                        value={job.business}
-                        onChange={(e) => handleChange(e, 'jobs', index)}
-                      />
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      <input
-                        type="text"
-                        name="from"
-                        className="w-full border-none p-1"
-                        placeholder="MM/YYYY"
-                        value={job.from}
-                        onChange={(e) => handleChange(e, 'jobs', index)}
-                      />
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      <input
-                        type="text"
-                        name="to"
-                        className="w-full border-none p-1"
-                        placeholder="MM/YYYY"
-                        value={job.to}
-                        onChange={(e) => handleChange(e, 'jobs', index)}
-                      />
-                    </td>
+                {formData.q197_jobs.map((row, rowIndex) => (
+                  <tr key={rowIndex} className="hover:bg-gray-50">
+                    <td className="px-4 py-2 border border-gray-300 text-center">{rowIndex + 1}</td>
+                    {row.map((cell, colIndex) => (
+                      <td key={colIndex} className="px-2 py-1 border border-gray-300">
+                        <input
+                          type="text"
+                          value={cell}
+                          onChange={(e) => handleMatrixChange('q197_jobs', rowIndex, colIndex, e.target.value)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          required={rowIndex < 3} // First 3 jobs are required in the dummy data
+                        />
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
             </table>
-          </li>
-
-          {/* Job Details Sections (1-5) */}
-          {formData.jobDetails.map((detail, index) => (
-            <React.Fragment key={index}>
-              <li className="w-full" data-type="control_text">
-                <div className="w-full">
-                  <p className="text-[16pt] font-bold font-arial">Provide more information about Job No. {index + 1} listed in Section 2</p>
-                  <p className="text-sm text-gray-600">Estimate hours and pay, if needed.</p>
-                </div>
-              </li>
-              <li className="w-full" data-type="control_textbox">
-                <label className="block text-left text-black" htmlFor={`jobTitle${index}`}>
-                  JOB TITLE NO. {index + 1}
+          </div>
+          
+          {/* Job 1 Details */}
+          <div className="mt-8">
+            <h3 className="text-md font-semibold text-gray-900 mb-2">
+              Provide more information about Job No. 1 listed in Section 2. Estimate hours and pay, if needed.
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Job Title */}
+              <div className="mb-4">
+                <label htmlFor="q199_jobTitle" className="block text-sm font-medium text-gray-700 mb-1">
+                  JOB TITLE NO. 1
                 </label>
                 <input
                   type="text"
-                  id={`jobTitle${index}`}
-                  name="title"
-                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  value={detail.title}
-                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                  id="q199_jobTitle"
+                  name="q199_jobTitle"
+                  value={formData.q199_jobTitle}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
-              </li>
-              <li className="w-full" data-type="control_textbox">
-                <label className="block text-left text-black" htmlFor={`rateOfPay${index}`}>
-                  Rate of Pay
+              </div>
+              
+              {/* Rate of Pay */}
+              <div className="mb-4">
+                <label htmlFor="q330_rateOf330" className="block text-sm font-medium text-gray-700 mb-1">
+                  Rate of Pay:
                 </label>
                 <input
                   type="text"
-                  id={`rateOfPay${index}`}
-                  name="rateOfPay"
-                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  value={detail.rateOfPay}
-                  onChange={(e) => handleChange(e, 'jobDetails', index)}
+                  id="q330_rateOf330"
+                  name="q330_rateOf330"
+                  value={formData.q330_rateOf330}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
-              </li>
-              <li className="w-full" data-type="control_radio">
-                <label className="block text-left text-black">Per (Check One):</label>
-                <div className="flex flex-wrap gap-4">
-                  {['Hour', 'Day', 'Week', 'Month', 'Year'].map((option) => (
-                    <label key={option} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="payPeriod"
-                        value={option}
-                        checked={detail.payPeriod === option}
-                        onChange={(e) => handleChange(e, 'jobDetails', index)}
-                        className="mr-2"
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              </li>
-              <li className="w-full" data-type="control_textbox">
-                <label className="block text-left text-black" htmlFor={`hoursPerDay${index}`}>
-                  Hours per Day
-                </label>
-                <input
-                  type="text"
-                  id={`hoursPerDay${index}`}
-                  name="hoursPerDay"
-                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  value={detail.hoursPerDay}
-                  onChange={(e) => handleChange(e, 'jobDetails', index)}
-                />
-              </li>
-              <li className="w-full" data-type="control_textbox">
-                <label className="block text-left text-black" htmlFor={`daysPerWeek${index}`}>
-                  Days per Week
-                </label>
-                <input
-                  type="text"
-                  id={`daysPerWeek${index}`}
-                  name="daysPerWeek"
-                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  value={detail.daysPerWeek}
-                  onChange={(e) => handleChange(e, 'jobDetails', index)}
-                />
-              </li>
-              <li className="w-full" data-type="control_textarea">
-                <label className="block text-left text-black" htmlFor={`tasks${index}`}>
-                  For the job you listed in Job Title No. {index + 1}, describe in detail the tasks you did in a typical workday.
-                </label>
-                <textarea
-                  id={`tasks${index}`}
-                  name="tasks"
-                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  rows="5"
-                  maxLength="525"
-                  value={detail.tasks}
-                  onChange={(e) => handleChange(e, 'jobDetails', index)}
-                ></textarea>
-                <p className="text-sm text-gray-500">{detail.tasks.length}/525</p>
-              </li>
-              <li className="w-full" data-type="control_textarea">
-                <label className="block text-left text-black" htmlFor={`reports${index}`}>
-                  If any of the tasks listed above involved writing or completing reports, describe the type of report you wrote or completed and how much time you spent on it per workday or workweek.
-                </label>
-                <textarea
-                  id={`reports${index}`}
-                  name="reports"
-                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  rows="5"
-                  maxLength="425"
-                  value={detail.reports}
-                  onChange={(e) => handleChange(e, 'jobDetails', index)}
-                ></textarea>
-                <p className="text-sm text-gray-500">{detail.reports.length}/425</p>
-              </li>
-              <li className="w-full" data-type="control_textarea">
-                <label className="block text-left text-black" htmlFor={`supervision${index}`}>
-                  If any of the tasks listed above involved supervising others, describe who or what you supervised and what supervisory duties you had.
-                </label>
-                <textarea
-                  id={`supervision${index}`}
-                  name="supervision"
-                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  rows="5"
-                  maxLength="425"
-                  value={detail.supervision}
-                  onChange={(e) => handleChange(e, 'jobDetails', index)}
-                ></textarea>
-                <p className="text-sm text-gray-500">{detail.supervision.length}/425</p>
-              </li>
-              <li className="w-full" data-type="control_textarea">
-                <label className="block text-left text-black" htmlFor={`tools${index}`}>
-                  List the machines, tools, and equipment you used regularly when doing this job, and explain what you used them for.
-                </label>
-                <textarea
-                  id={`tools${index}`}
-                  name="tools"
-                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  rows="5"
-                  maxLength="425"
-                  value={detail.tools}
-                  onChange={(e) => handleChange(e, 'jobDetails', index)}
-                ></textarea>
-                <p className="text-sm text-gray-500">{detail.tools.length}/425</p>
-              </li>
-              <li className="w-full" data-type="control_radio">
-                <label className="block text-left text-black">
-                  Did this job require you to interact with coworkers, the general public, or anyone else?
-                </label>
-                <div className="flex gap-4">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="interaction"
-                      value="Yes"
-                      checked={detail.interaction === 'Yes'}
-                      onChange={(e) => handleChange(e, 'jobDetails', index)}
-                      className="mr-2"
-                    />
-                    Yes
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="interaction"
-                      value="No"
-                      checked={detail.interaction === 'No'}
-                      onChange={(e) => handleChange(e, 'jobDetails', index)}
-                      className="mr-2"
-                    />
-                    No
-                  </label>
-                </div>
-              </li>
-              {showInteractionDetails[index] && (
-                <li className="w-full" data-type="control_textarea">
-                  <label className="block text-left text-black" htmlFor={`interactionDetails${index}`}>
-                    If YES, describe who you interacted with, the purpose of the interaction, how you interacted, and how much time you spent doing it per workday or workweek.
-                  </label>
-                  <textarea
-                    id={`interactionDetails${index}`}
-                    name="interactionDetails"
-                    className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                    rows="5"
-                    maxLength="525"
-                    value={detail.interactionDetails}
-                    onChange={(e) => handleChange(e, 'jobDetails', index)}
-                  ></textarea>
-                  <p className="text-sm text-gray-500">{detail.interactionDetails.length}/525</p>
-                </li>
-              )}
-              <li className="w-full" data-type="control_matrix">
-                <label className="block text-left text-black">
-                  Tell us how much time you spent doing the following physical activities in a typical workday.
-                </label>
-                <p className="text-sm text-gray-600">
-                  The total hours/minutes for standing, walking, and sitting should equal the Hours per Day. The example below shows an 8-hour workday with 2 hours standing and walking, and 6 hours sitting (8 hours total).
-                </p>
-                <table className="w-full border-collapse border border-gray-300">
-                  <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border border-gray-300 p-2">Activities</th>
-                      <th className="border border-gray-300 p-2">How much of your workday? (Hours/Minutes)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { key: 'standingWalking', label: 'Standing and walking (combined)' },
-                      { key: 'sitting', label: 'Sitting' },
-                      { key: 'stooping', label: 'Stooping (i.e., bending down & forward at waist)' },
-                      { key: 'kneeling', label: 'Kneeling (i.e., bending legs to rest on knees)' },
-                      { key: 'crouching', label: 'Crouching (i.e., bending legs & back down & forward)' },
-                      { key: 'crawling', label: 'Crawling (i.e., moving on hands and knees)' },
-                      { key: 'climbingStairs', label: 'Climbing stairs or ramps' },
-                      { key: 'climbingLadders', label: 'Climbing ladders, ropes, or scaffolds' },
-                    ].map(({ key, label }) => (
-                      <tr key={key}>
-                        <td className="border border-gray-300 p-2">{label}</td>
-                        <td className="border border-gray-300 p-2">
-                          <input
-                            type="text"
-                            name={`physicalActivities.${key}`}
-                            className="w-full border-none p-1"
-                            value={detail.physicalActivities[key]}
-                            onChange={(e) => handleChange(e, 'jobDetails', index)}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </li>
-              <li className="w-full" data-type="control_matrix">
-                <label className="block text-left text-black">Hand Activities</label>
-                <table className="w-full border-collapse border border-gray-300">
-                  <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border border-gray-300 p-2">Activities</th>
-                      <th className="border border-gray-300 p-2">One Hand</th>
-                      <th className="border border-gray-300 p-2">Both Hands</th>
-                      <th className="border border-gray-300 p-2">How much of your workday? (Hours/Minutes)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      {
-                        label: 'Using fingers to touch, pick, or pinch (e.g., using a mouse, keyboard, turning pages, or buttoning a shirt)',
-                        oneHandKey: 'fingersOneHand',
-                        bothHandsKey: 'fingersBothHands',
-                        timeKey: 'fingersTime',
-                      },
-                      {
-                        label: 'Using hands to seize, hold, grasp, or turn (e.g., holding a large envelope, a small box, a hammer, or water bottle)',
-                        oneHandKey: 'graspOneHand',
-                        bothHandsKey: 'graspBothHands',
-                        timeKey: 'graspTime',
-                      },
-                    ].map(({ label, oneHandKey, bothHandsKey, timeKey }) => (
-                      <tr key={label}>
-                        <td className="border border-gray-300 p-2">{label}</td>
-                        <td className="border border-gray-300 p-2">
-                          <input
-                            type="checkbox"
-                            name={`handActivities.${oneHandKey}`}
-                            checked={detail.handActivities[oneHandKey]}
-                            onChange={(e) => handleChange(e, 'jobDetails', index)}
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <input
-                            type="checkbox"
-                            name={`handActivities.${bothHandsKey}`}
-                            checked={detail.handActivities[bothHandsKey]}
-                            onChange={(e) => handleChange(e, 'jobDetails', index)}
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <input
-                            type="text"
-                            name={`handActivities.${timeKey}`}
-                            className="w-full border-none p-1"
-                            value={detail.handActivities[timeKey]}
-                            onChange={(e) => handleChange(e, 'jobDetails', index)}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </li>
-              <li className="w-full" data-type="control_matrix">
-                <label className="block text-left text-black">Arm Activities</label>
-                <table className="w-full border-collapse border border-gray-300">
-                  <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border border-gray-300 p-2">Activities</th>
-                      <th className="border border-gray-300 p-2">One Arm</th>
-                      <th className="border border-gray-300 p-2">Both Arms</th>
-                      <th className="border border-gray-300 p-2">How much of your workday? (Hours/Minutes)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      {
-                        label: 'Reaching at or below the shoulder',
-                        oneArmKey: 'reachBelowOneArm',
-                        bothArmsKey: 'reachBelowBothArms',
-                        timeKey: 'reachBelowTime',
-                      },
-                      {
-                        label: 'Reaching overhead (above the shoulder)',
-                        oneArmKey: 'reachOverheadOneArm',
-                        bothArmsKey: 'reachOverheadBothArms',
-                        timeKey: 'reachOverheadTime',
-                      },
-                    ].map(({ label, oneArmKey, bothArmsKey, timeKey }) => (
-                      <tr key={label}>
-                        <td className="border border-gray-300 p-2">{label}</td>
-                        <td className="border border-gray-300 p-2">
-                          <input
-                            type="checkbox"
-                            name={`armActivities.${oneArmKey}`}
-                            checked={detail.armActivities[oneArmKey]}
-                            onChange={(e) => handleChange(e, 'jobDetails', index)}
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <input
-                            type="checkbox"
-                            name={`armActivities.${bothArmsKey}`}
-                            checked={detail.armActivities[bothArmsKey]}
-                            onChange={(e) => handleChange(e, 'jobDetails', index)}
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          <input
-                            type="text"
-                            name={`armActivities.${timeKey}`}
-                            className="w-full border-none p-1"
-                            value={detail.armActivities[timeKey]}
-                            onChange={(e) => handleChange(e, 'jobDetails', index)}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </li>
-              <li className="w-full" data-type="control_textarea">
-                <label className="block text-left text-black" htmlFor={`liftingCarrying${index}`}>
-                  Tell us about lifting and carrying in this job. Explain what you lifted, how far you carried it, and how often you did it in a typical workday.
-                </label>
-                <textarea
-                  id={`liftingCarrying${index}`}
-                  name="liftingCarrying"
-                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  rows="5"
-                  maxLength="275"
-                  value={detail.liftingCarrying}
-                  onChange={(e) => handleChange(e, 'jobDetails', index)}
-                ></textarea>
-                <p className="text-sm text-gray-500">{detail.liftingCarrying.length}/275</p>
-              </li>
-              <li className="w-full" data-type="control_radio">
-                <label className="block text-left text-black">Select the heaviest weight lifted:</label>
-                <div className="flex flex-wrap gap-4">
-                  {['Less than 1 lb.', 'Less than 10 lbs.', '10 lbs.', '20 lbs.', '50 lbs.', '100 lbs. or more', 'Other'].map((option) => (
-                    <label key={option} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="heaviestWeight"
-                        value={option}
-                        checked={detail.heaviestWeight === option}
-                        onChange={(e) => handleChange(e, 'jobDetails', index)}
-                        className="mr-2"
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              </li>
-              <li className="w-full" data-type="control_radio">
-                <label className="block text-left text-black">Select the weight frequently lifted (i.e., 1/3 to 2/3 of the workday):</label>
-                <div className="flex flex-wrap gap-4">
-                  {['Less than 1 lb.', 'Less than 10 lbs.', '10 lbs.', '25 lbs.', '50 lbs. or more', 'Other'].map((option) => (
-                    <label key={option} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="frequentWeight"
-                        value={option}
-                        checked={detail.frequentWeight === option}
-                        onChange={(e) => handleChange(e, 'jobDetails', index)}
-                        className="mr-2"
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              </li>
-              <li className="w-full" data-type="control_checkbox">
-                <label className="block text-left text-black">Did this job expose you to any of the following? Check all that apply.</label>
-                <div className="flex flex-wrap gap-4">
-                  {[
-                    'Outdoors',
-                    'Extreme heat (non-weather related)',
-                    'Extreme cold (non-weather related)',
-                    'Wetness',
-                    'Humidity',
-                    'Hazardous substances',
-                    'Moving mechanical parts',
-                    'High, exposed places',
-                    'Heavy vibrations',
-                    'Loud noises',
-                    'Other',
-                  ].map((option) => (
-                    <label key={option} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        name="exposures"
-                        value={option}
-                        checked={detail.exposures.includes(option)}
-                        onChange={(e) => handleChange(e, 'jobDetails', index)}
-                        className="mr-2"
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              </li>
-              {detail.exposures.length > 0 && (
-                <li className="w-full" data-type="control_textarea">
-                  <label className="block text-left text-black" htmlFor={`exposureDetails${index}`}>
-                    If one or more boxes are checked, tell us about the exposure(s) and how often you were exposed.
-                  </label>
-                  <textarea
-                    id={`exposureDetails${index}`}
-                    name="exposureDetails"
-                    className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                    rows="5"
-                    maxLength="275"
-                    value={detail.exposureDetails}
-                    onChange={(e) => handleChange(e, 'jobDetails', index)}
-                  ></textarea>
-                  <p className="text-sm text-gray-500">{detail.exposureDetails.length}/275</p>
-                </li>
-              )}
-              <li className="w-full" data-type="control_textarea">
-                <label className="block text-left text-black" htmlFor={`medicalConditions${index}`}>
-                  Explain how your medical conditions would affect your ability to do this job.
-                </label>
-                <textarea
-                  id={`medicalConditions${index}`}
-                  name="medicalConditions"
-                  className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  rows="5"
-                  maxLength="275"
-                  value={detail.medicalConditions}
-                  onChange={(e) => handleChange(e, 'jobDetails', index)}
-                ></textarea>
-                <p className="text-sm text-gray-500">{detail.medicalConditions.length}/275</p>
-              </li>
-            </React.Fragment>
-          ))}
-
-          {/* Section 3 - Remarks */}
-          <li className="w-full" data-type="control_text">
-            <div className="w-full">
-              <p className="text-[16pt] font-bold font-arial">SECTION 3 - REMARKS</p>
-              <p className="text-sm text-gray-600">
-                Please provide any additional information you did not give in earlier parts of this report. If you did not have enough space in the prior sections of this report to provide the requested information, please use this space to provide the additional information requested in those sections. Be sure to include the job title number and question to which you are referring. If you add more jobs than the 5 jobs listed, please provide the same information as you did for job titles numbers 1-5 on a separate sheet of paper(s).
-              </p>
+              </div>
             </div>
-          </li>
-          <li className="w-full" data-type="control_textarea">
-            <label className="block text-left text-black" htmlFor="remarks">
+            
+            {/* Per (Check One) */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Per (Check One):
+              </label>
+              <div className="flex flex-wrap gap-4">
+                {['Hour', 'Day', 'Week', 'Month', 'Year'].map((option) => (
+                  <label key={option} className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="q331_percheck331"
+                      value={option}
+                      checked={formData.q331_percheck331.includes(option)}
+                      onChange={handleInputChange}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{option}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Hours per Day */}
+              <div className="mb-4">
+                <label htmlFor="q332_hoursPer332" className="block text-sm font-medium text-gray-700 mb-1">
+                  Hours per Day:
+                </label>
+                <input
+                  type="number"
+                  id="q332_hoursPer332"
+                  name="q332_hoursPer332"
+                  value={formData.q332_hoursPer332}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., 3"
+                />
+              </div>
+              
+              {/* Days per Week */}
+              <div className="mb-4">
+                <label htmlFor="q333_daysPer333" className="block text-sm font-medium text-gray-700 mb-1">
+                  Days per Week:
+                </label>
+                <input
+                  type="number"
+                  id="q333_daysPer333"
+                  name="q333_daysPer333"
+                  value={formData.q333_daysPer333}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., 4"
+                />
+              </div>
+            </div>
+            
+            {/* Tasks Description */}
+            <div className="mb-4">
+              <label htmlFor="q334_forThe334" className="block text-sm font-medium text-gray-700 mb-1">
+                For the job you listed in Job Title No. 1, describe in detail the tasks you did in a typical workday.
+              </label>
+              <textarea
+                id="q334_forThe334"
+                name="q334_forThe334"
+                value={formData.q334_forThe334}
+                onChange={handleInputChange}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            
+            {/* Reports Description */}
+            <div className="mb-4">
+              <label htmlFor="q335_ifAny335" className="block text-sm font-medium text-gray-700 mb-1">
+                If any of the tasks listed above involved writing or completing reports, describe the type of report you wrote or completed and how much time you spent on it per workday or workweek.
+              </label>
+              <textarea
+                id="q335_ifAny335"
+                name="q335_ifAny335"
+                value={formData.q335_ifAny335}
+                onChange={handleInputChange}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            
+            {/* Supervisory Duties */}
+            <div className="mb-4">
+              <label htmlFor="q206_ifAny206" className="block text-sm font-medium text-gray-700 mb-1">
+                If any of the tasks listed above involved supervising others, describe who or what you supervised and what supervisory duties you had.
+              </label>
+              <textarea
+                id="q206_ifAny206"
+                name="q206_ifAny206"
+                value={formData.q206_ifAny206}
+                onChange={handleInputChange}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            
+            {/* Equipment Used */}
+            <div className="mb-4">
+              <label htmlFor="q207_listThe" className="block text-sm font-medium text-gray-700 mb-1">
+                List the machines, tools, and equipment you used regularly when doing this job, and explain what you used them for.
+              </label>
+              <textarea
+                id="q207_listThe"
+                name="q207_listThe"
+                value={formData.q207_listThe}
+                onChange={handleInputChange}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            
+            {/* Interaction Checkbox */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Did this job require you to interact with coworkers, the general public, or anyone else?
+              </label>
+              <div className="flex gap-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    name="q209_didThis"
+                    value="Yes"
+                    checked={formData.q209_didThis.includes('Yes')}
+                    onChange={handleInputChange}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">Yes</span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    name="q209_didThis"
+                    value="No"
+                    checked={formData.q209_didThis.includes('No')}
+                    onChange={handleInputChange}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">No</span>
+                </label>
+              </div>
+            </div>
+            
+            {/* Interaction Description */}
+            {formData.q209_didThis.includes('Yes') && (
+              <div className="mb-4">
+                <label htmlFor="q208_listThe208" className="block text-sm font-medium text-gray-700 mb-1">
+                  If YES, describe who you interacted with, the purpose of the interaction, how you interacted, and how much time you spent doing it per workday or workweek.
+                </label>
+                <textarea
+                  id="q208_listThe208"
+                  name="q208_listThe208"
+                  value={formData.q208_listThe208}
+                  onChange={handleInputChange}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            )}
+            
+            {/* Physical Activities */}
+            <div className="mt-6">
+              <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                Tell us how much time you spent doing the following physical activities in a typical workday. 
+                The total hours/minutes for standing, walking, and sitting should equal the Hours per Day. 
+                The example below shows an 8-hour workday with 2 hours standing and walking, and 6 hours sitting (8 hours total).
+              </h4>
+              
+              <div className="overflow-x-auto">
+                <table className="min-w-full border border-gray-200">
+                  <thead>
+                    <tr className="bg-blue-600 text-white">
+                      <th className="px-4 py-2 border border-gray-300"></th>
+                      <th className="px-4 py-2 border border-gray-300">
+                        <label className="block font-normal">
+                          How much of your workday? (Hours/Minutes)
+                        </label>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      'Standing and walking (combined)',
+                      'Sitting',
+                      'Stooping (i.e., bending down & forward at waist)',
+                      'Kneeling (i.e., bending legs to rest on knees)',
+                      'Crouching (i.e., bending legs & back down & forward)',
+                      'Crawling (i.e., moving on hands and knees)',
+                      'Climbing stairs or ramps',
+                      'Climbing ladders, ropes, or scaffolds'
+                    ].map((activity, rowIndex) => (
+                      <tr key={rowIndex} className="hover:bg-gray-50">
+                        <td className="px-4 py-2 border border-gray-300">{activity}</td>
+                        <td className="px-2 py-1 border border-gray-300">
+                          <input
+                            type="text"
+                            value={formData.q340_activities340[rowIndex][0]}
+                            onChange={(e) => {
+                              const newActivities = [...formData.q340_activities340];
+                              newActivities[rowIndex][0] = e.target.value;
+                              setFormData({ ...formData, q340_activities340: newActivities });
+                            }}
+                            className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Section 3 - Remarks */}
+        <div className="border-b border-gray-200 pb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">SECTION 3 - REMARKS</h2>
+          
+          <p className="text-sm text-gray-600 mb-4">
+            Please provide any additional information you did not give in earlier parts of this report. 
+            If you did not have enough space in the prior sections of this report to provide the requested information, 
+            please use this space to provide the additional information requested in those sections. Be sure to include 
+            the job title number and question to which you are referring. If you add more jobs than the 5 jobs listed, 
+            please provide the same information as you did for job titles numbers 1-5 on a separate sheet of paper(s).
+          </p>
+          
+          <div className="mb-4">
+            <label htmlFor="q313_typeA" className="block text-sm font-medium text-gray-700 mb-1">
               Remarks
             </label>
             <textarea
-              id="remarks"
-              name="remarks"
-              className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-              rows="5"
-              maxLength="2000"
-              value={formData.remarks}
-              onChange={(e) => handleChange(e, 'topLevel')}
-            ></textarea>
-            <p className="text-sm text-gray-500">{formData.remarks.length}/2000</p>
-          </li>
-
-          {/* Section 4 - Who is Completing This Report */}
-          <li className="w-full" data-type="control_text">
-            <div className="w-full">
-              <p className="text-[16pt] font-bold font-arial">SECTION 4 - WHO IS COMPLETING THIS REPORT</p>
-            </div>
-          </li>
-          <li className="w-full" data-type="control_textbox">
-            <label className="block text-left text-black" htmlFor="completionDate">
-              Date Report Completed (MM/DD/YYYY) <span className="text-[#f23a3c]">*</span>
-            </label>
-            <input
-              type="text"
-              id="completionDate"
-              name="completionDate"
-              className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                formSubmitted && !formData.completionDate ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
-              }`}
-              placeholder="MM/DD/YYYY"
-              required
-              value={formData.completionDate}
-              onChange={(e) => handleChange(e, 'topLevel')}
+              id="q313_typeA"
+              name="q313_typeA"
+              value={formData.q313_typeA}
+              onChange={handleInputChange}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
-          </li>
-          <li className="w-full" data-type="control_radio">
-            <label className="block text-left text-black">Who is completing this report? <span className="text-[#f23a3c]">*</span></label>
-            <div className="flex gap-4">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="completer"
-                  value="person"
-                  checked={formData.completer === 'person'}
-                  onChange={(e) => handleChange(e, 'topLevel')}
-                  className="mr-2"
-                />
-                The person listed in 1.A.
+          </div>
+        </div>
+        
+        {/* Section 4 - Who is Completing This Report */}
+        <div className="pb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">SECTION 4 - WHO IS COMPLETING THIS REPORT</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Date Report Completed */}
+            <div className="mb-4">
+              <label htmlFor="q315_dateReport" className="block text-sm font-medium text-gray-700 mb-1">
+                Date Report Completed (MM/DD/YYYY)
               </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="completer"
-                  value="someone-else"
-                  checked={formData.completer === 'someone-else'}
-                  onChange={(e) => handleChange(e, 'topLevel')}
-                  className="mr-2"
-                />
-                Someone else (Complete the information below)
-              </label>
-            </div>
-          </li>
-          <li className="w-full" data-type="control_textbox">
-            <label className="block text-left text-black" htmlFor="completerName">
-              NAME <span className="text-[#f23a3c]">*</span>
-            </label>
-            <input
-              type="text"
-              id="completerName"
-              name="completerName"
-              className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                formSubmitted && !formData.completerName ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
-              }`}
-              required
-              value={formData.completerName}
-              onChange={(e) => handleChange(e, 'topLevel')}
-            />
-          </li>
-          <li className="w-full" data-type="control_textbox">
-            <label className="block text-left text-black" htmlFor="completerRelationship">
-              Relationship to the Person in 1.A. <span className="text-[#f23a3c]">*</span>
-            </label>
-            <input
-              type="text"
-              id="completerRelationship"
-              name="completerRelationship"
-              className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                formSubmitted && !formData.completerRelationship ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
-              }`}
-              required
-              value={formData.completerRelationship}
-              onChange={(e) => handleChange(e, 'topLevel')}
-            />
-          </li>
-          <li className="w-full" data-type="control_address">
-            <label className="block text-left text-black">
-              MAILING ADDRESS (Street or PO Box) Include the apartment number, if applicable. <span className="text-[#f23a3c]">*</span>
-            </label>
-            <div className="flex flex-col gap-2.5">
               <input
                 type="text"
-                name="street"
-                className={`border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                  formSubmitted && !formData.address.street ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
-                }`}
+                id="q315_dateReport"
+                name="q315_dateReport"
+                value={formData.q315_dateReport}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+          
+          {/* Who is completing */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Who is completing this report?
+            </label>
+            <div className="space-y-2">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  name="q316_whoIs"
+                  value="Myself"
+                  checked={formData.q316_whoIs.includes('Myself')}
+                  onChange={handleInputChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <span className="ml-2 text-sm text-gray-700">Myself</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  name="q316_whoIs"
+                  value="Someone else (Complete the information below)"
+                  checked={formData.q316_whoIs.includes('Someone else (Complete the information below)')}
+                  onChange={handleInputChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <span className="ml-2 text-sm text-gray-700">Someone else (Complete the information below)</span>
+              </label>
+            </div>
+          </div>
+          
+          {/* Name */}
+          <div className="mb-4">
+            <label htmlFor="q317_name317" className="block text-sm font-medium text-gray-700 mb-1">
+              NAME
+            </label>
+            <input
+              type="text"
+              id="q317_name317"
+              name="q317_name317"
+              value={formData.q317_name317}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          
+          {/* Relationship */}
+          <div className="mb-4">
+            <label htmlFor="q318_name318" className="block text-sm font-medium text-gray-700 mb-1">
+              Relationship to the Person in 1.A.
+            </label>
+            <input
+              type="text"
+              id="q318_name318"
+              name="q318_name318"
+              value={formData.q318_name318}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          
+          {/* Mailing Address */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              MAILING ADDRESS (Street or PO Box) Include the apartment number, if applicable.
+            </label>
+            <div className="space-y-2">
+              <input
+                type="text"
                 placeholder="Street Address"
-                required
-                value={formData.address.street}
-                onChange={(e) => handleChange(e, 'address')}
+                value={formData.q319_mailingAddress.addr_line1}
+                onChange={(e) => handleAddressChange('addr_line1', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
               <input
                 type="text"
-                name="street2"
-                className="border rounded p-2 text-base bg-white w-full hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                placeholder="Street Address Line 2"
-                value={formData.address.street2}
-                onChange={(e) => handleChange(e, 'address')}
+                placeholder="Apt/Suite"
+                value={formData.q319_mailingAddress.addr_line2}
+                onChange={(e) => handleAddressChange('addr_line2', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
-              <div className="flex gap-2.5">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <input
                   type="text"
-                  name="city"
-                  className="border rounded p-2 text-base bg-white w-1/2 hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
                   placeholder="City"
-                  value={formData.address.city}
-                  onChange={(e) => handleChange(e, 'address')}
+                  value={formData.q319_mailingAddress.city}
+                  onChange={(e) => handleAddressChange('city', e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 <input
                   type="text"
-                  name="state"
-                  className="border rounded p-2 text-base bg-white w-1/2 hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  placeholder="State / Province"
-                  value={formData.address.state}
-                  onChange={(e) => handleChange(e, 'address')}
+                  placeholder="State"
+                  value={formData.q319_mailingAddress.state}
+                  onChange={(e) => handleAddressChange('state', e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
-              </div>
-              <div className="flex gap-2.5">
                 <input
                   type="text"
-                  name="zip"
-                  className="border rounded p-2 text-base bg-white w-1/2 hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  placeholder="Postal / Zip Code"
-                  value={formData.address.zip}
-                  onChange={(e) => handleChange(e, 'address')}
+                  placeholder="ZIP Code"
+                  value={formData.q319_mailingAddress.postal}
+                  onChange={(e) => handleAddressChange('postal', e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
-                <select
-                  name="country"
-                  className="border rounded p-2 text-base bg-white w-1/2 hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none border-[#C3CAD8]/75"
-                  value={formData.address.country}
-                  onChange={(e) => handleChange(e, 'address')}
-                >
-                  <option>Please Select</option>
-                  <option>Afghanistan</option>
-                  <option>Albania</option>
-                  <option>Algeria</option>
-                  <option>American Samoa</option>
-                  <option>Other</option>
-                </select>
               </div>
+              <input
+                type="text"
+                placeholder="Country"
+                value={formData.q319_mailingAddress.country}
+                onChange={(e) => handleAddressChange('country', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
             </div>
-          </li>
-          <li className="w-full" data-type="control_phone">
-            <label className="block text-left text-black" htmlFor="completerPhone">
-              DAYTIME PHONE NUMBER where we may reach you or leave a message, if needed. Include the area code or IDD and country code if outside the USA or Canada. <span className="text-[#f23a3c]">*</span>
+          </div>
+          
+          {/* Daytime Phone */}
+          <div className="mb-4">
+            <label htmlFor="q320_daytimePhone" className="block text-sm font-medium text-gray-700 mb-1">
+              DAYTIME PHONE NUMBER where we may reach you or leave a message, if needed. Include the area code or IDD and country code if outside the USA or Canada.
             </label>
             <input
               type="tel"
-              id="completerPhone"
-              name="completerPhone"
-              className={`border rounded p-2 text-base bg-white w-[310px] hover:border-[#2e69ff] focus:border-[#2e69ff] focus:ring-1 focus:ring-[#C9D8FE]/25 outline-none ${
-                formSubmitted && !phoneRegex.test(formData.completerPhone) ? 'border-[#f23a3c] bg-[#ffd6d6]' : 'border-[#C3CAD8]/75'
-              }`}
-              placeholder="(000) 000-0000"
-              required
-              value={formData.completerPhone}
-              onChange={(e) => handleChange(e, 'topLevel')}
-              maxLength={14}
+              id="q320_daytimePhone"
+              name="q320_daytimePhone"
+              value={formData.q320_daytimePhone}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="(###) ###-####"
             />
-          </li>
-
-          {/* Buttons */}
-          <li className="w-full" data-type="control_button">
-            <div className="w-full flex justify-between">
-              <button
-                type="button"
-                className="bg-gray-300 text-gray-700 px-4 py-2.5 rounded cursor-pointer hover:bg-gray-400"
-                data-component="button"
-              >
-                Back
-              </button>
-              <div>
-                <button
-                  type="button"
-                  className="bg-blue-500 text-white px-4 py-2.5 rounded cursor-pointer hover:bg-blue-600 mr-2"
-                  data-component="button"
-                >
-                  Preview PDF
-                </button>
-                <button
-                  type="submit"
-                  className="bg-[#18BD5B] border border-[#18BD5B] text-white min-w-[180px] px-4 py-2.5 rounded cursor-pointer hover:bg-[#16AA52] hover:border-[#16AA52]"
-                  data-component="button"
-                >
-                  Submit
-                </button>
-              </div>
-            </div>
-          </li>
-
-          {/* Hidden Anti-Spam Field */}
-          <li className="hidden">
-            Should be Empty: <input
-              type="text"
-              name="website"
-              value={formData.website}
-              onChange={(e) => handleChange(e, 'topLevel')}
-            />
-          </li>
-        </ul>
+          </div>
+        </div>
+        
+        {/* Submit Button */}
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Submit
+          </button>
+        </div>
       </form>
     </div>
   );
 };
+
+
 
 export default WorkHistoryReport;
