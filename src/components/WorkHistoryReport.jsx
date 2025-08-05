@@ -845,6 +845,7 @@ const WorkHistoryReport = () => {
       ['None'] // Climbing ladders
     ],
     
+    
     // Job 2 Details
     q221_jobTitle221: 'Warehouse Associate',
     q222_rateOf222: '18.00',
@@ -899,6 +900,7 @@ const WorkHistoryReport = () => {
     q316_whoIs: ['Myself'],
     q317_name317: 'John A. Doe Jr.',
     q318_name318: 'Self',
+    
     q319_mailingAddress: {
       addr_line1: '123 Main St',
       addr_line2: 'Apt 4B',
