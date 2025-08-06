@@ -374,7 +374,7 @@
 //         <div className="flex justify-between items-center mb-6">
 //           <h1 className="text-3xl font-bold text-primary">WORK HISTORY REPORT</h1>
 //           <div className="space-x-4">
-           
+
 //             <button
 //               onClick={onCancel}
 //               className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
@@ -797,17 +797,17 @@
 
 // export default WorkHistoryReport;
 
-import React, { useState }  from 'react';
+import React, { useState } from 'react';
 
 const WorkHistoryReport = () => {
-   // State for form data
+  // State for form data
   const [formData, setFormData] = useState({
     // Section 1 - Information About You
     q190_name: 'John A. Doe Jr.',
     q326_socialSecurity: '123-45-6789',
     q327_primary327: '(555) 123-4567',
     q328_secondaryif328: '(555) 987-6543',
-    
+
     // Section 2 - Work History (Matrix) - 5 jobs
     q197_jobs: [
       ['Cashier', 'Grocery Store', '01/2020', '06/2022'],
@@ -821,7 +821,7 @@ const WorkHistoryReport = () => {
       ['', '', '', ''],
       ['', '', '', '']
     ],
-    
+
     // Job 1 Details
     q199_jobTitle: 'Cashier',
     q330_rateOf330: '15.50',
@@ -844,8 +844,22 @@ const WorkHistoryReport = () => {
       ['15 minutes'], // Climbing stairs
       ['None'] // Climbing ladders
     ],
-    
-    
+     q212_activities212: [
+    // First row - Using fingers to touch, pick, or pinch
+    [
+      true,  // One Hand checkbox (false = unchecked, true = checked)
+      true,   // Both Hands checkbox
+      "6 hours" // Text input for duration
+    ],
+    // Second row - Using hands to seize, hold, grasp, or turn
+    [
+      true,   // One Hand checkbox
+      false,  // Both Hands checkbox
+      "3 hours" // Text input for duration
+    ]
+  ],
+
+
     // Job 2 Details
     q221_jobTitle221: 'Warehouse Associate',
     q222_rateOf222: '18.00',
@@ -868,7 +882,8 @@ const WorkHistoryReport = () => {
       ['45 minutes'], // Climbing stairs
       ['15 minutes'] // Climbing ladders
     ],
-    
+
+
     // Job 3 Details
     q243_jobTitle243: 'Customer Service Rep',
     q244_rateOf244: '16.75',
@@ -891,16 +906,16 @@ const WorkHistoryReport = () => {
       ['15 minutes'], // Climbing stairs
       ['None'] // Climbing ladders
     ],
-    
+
     // Section 3 - Remarks
     q313_typeA: 'No additional remarks at this time.',
-    
+
     // Section 4 - Who is Completing This Report
     q315_dateReport: new Date().toLocaleDateString('en-US'),
     q316_whoIs: ['Myself'],
     q317_name317: 'John A. Doe Jr.',
     q318_name318: 'Self',
-    
+
     q319_mailingAddress: {
       addr_line1: '123 Main St',
       addr_line2: 'Apt 4B',
@@ -914,7 +929,7 @@ const WorkHistoryReport = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (type === 'checkbox') {
       const currentValues = [...formData[name] || []];
       if (checked) {
@@ -949,10 +964,10 @@ const WorkHistoryReport = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Prepare the form data for submission
     const submissionData = new FormData();
-    
+
     // Add all form fields to the submission data
     Object.entries(formData).forEach(([key, value]) => {
       if (Array.isArray(value)) {
@@ -965,31 +980,50 @@ const WorkHistoryReport = () => {
         submissionData.append(key, value);
       }
     });
-    
+
     // Add matrix data
     formData.q197_jobs.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
         submissionData.append(`q197_jobs[${rowIndex}][${colIndex}]`, cell);
       });
     });
-    
+
     formData.q340_activities340.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
         submissionData.append(`q340_activities340[${rowIndex}][${colIndex}]`, cell);
       });
     });
-    
+
+
+
+
+    formData.q212_activities212.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        const valueToSend =
+          colIndex < 2 ? (cell ? 'on' : 'off') : cell; // First two columns are checkboxes
+        submissionData.append(
+          `q212_activities212[${rowIndex}][${colIndex}]`,
+          valueToSend
+        );
+      });
+    });
+
+    // Add the column and row IDs that match your HTML structure
+    submissionData.append('q212_activities212[colIds]', '["0","1","2"]');
+    submissionData.append('q212_activities212[rowIds]', '["0","1"]');
+
+
     // Add matrix row/col IDs
     submissionData.append('q197_jobs[colIds]', '["0","1","2","3"]');
     submissionData.append('q197_jobs[rowIds]', '["0","1","2","3","4","5","6","7","8","9"]');
     submissionData.append('q340_activities340[colIds]', '["0"]');
     submissionData.append('q340_activities340[rowIds]', '["0","1","2","3","4","5","6","7"]');
-    
+
     // Add hidden fields from the original form
     submissionData.append('formID', '241841575846062');
     submissionData.append('submitSource', 'react-component');
     submissionData.append('buildDate', Date.now());
-    
+
     try {
       const response = await fetch('https://submit.jotform.com/submit/241841575846062', {
         method: 'POST',
@@ -998,7 +1032,7 @@ const WorkHistoryReport = () => {
           'Accept': 'application/json'
         }
       });
-      
+
       if (response.ok) {
         alert('Form submitted successfully!');
         // You can redirect or reset the form here if needed
@@ -1017,7 +1051,7 @@ const WorkHistoryReport = () => {
         {/* Section 1 - Information About You */}
         <div className="border-b border-gray-200 pb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">SECTION 1 - INFORMATION ABOUT YOU</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div className="mb-4">
@@ -1035,7 +1069,7 @@ const WorkHistoryReport = () => {
                 required
               />
             </div>
-            
+
             {/* Social Security Number */}
             <div className="mb-4">
               <label htmlFor="q326_socialSecurity" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1053,13 +1087,13 @@ const WorkHistoryReport = () => {
               />
             </div>
           </div>
-          
+
           <div className="mt-4">
             <p className="text-sm text-gray-600 mb-2">
-              DAYTIME PHONE NUMBER(S) where we can call to speak with you or leave a message, if needed. 
+              DAYTIME PHONE NUMBER(S) where we can call to speak with you or leave a message, if needed.
               Include area code or IDD and country code if outside the USA or Canada.
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Primary Phone */}
               <div className="mb-4">
@@ -1077,7 +1111,7 @@ const WorkHistoryReport = () => {
                   required
                 />
               </div>
-              
+
               {/* Secondary Phone */}
               <div className="mb-4">
                 <label htmlFor="q328_secondaryif328" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1096,15 +1130,15 @@ const WorkHistoryReport = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Section 2 - Work History */}
         <div className="border-b border-gray-200 pb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">SECTION 2 - WORK HISTORY</h2>
-          
+
           <p className="text-sm text-gray-600 mb-4">
             List all the jobs you had in the <strong>5 years before you became unable to work</strong> because of your medical conditions:
           </p>
-          
+
           <ul className="list-disc pl-5 text-sm text-gray-600 mb-4 space-y-1">
             <li>List your most recent job first</li>
             <li>List all job titles even if they were for the same employer</li>
@@ -1112,7 +1146,7 @@ const WorkHistoryReport = () => {
             <li>Include self-employment (e.g., rideshare driver, hair stylist)</li>
             <li>Include work in a foreign country</li>
           </ul>
-          
+
           {/* Jobs Matrix */}
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-200">
@@ -1161,13 +1195,13 @@ const WorkHistoryReport = () => {
               </tbody>
             </table>
           </div>
-          
+
           {/* Job 1 Details */}
           <div className="mt-8">
             <h3 className="text-md font-semibold text-gray-900 mb-2">
               Provide more information about Job No. 1 listed in Section 2. Estimate hours and pay, if needed.
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Job Title */}
               <div className="mb-4">
@@ -1183,7 +1217,7 @@ const WorkHistoryReport = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              
+
               {/* Rate of Pay */}
               <div className="mb-4">
                 <label htmlFor="q330_rateOf330" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1199,7 +1233,7 @@ const WorkHistoryReport = () => {
                 />
               </div>
             </div>
-            
+
             {/* Per (Check One) */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1221,7 +1255,7 @@ const WorkHistoryReport = () => {
                 ))}
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Hours per Day */}
               <div className="mb-4">
@@ -1238,7 +1272,7 @@ const WorkHistoryReport = () => {
                   placeholder="e.g., 3"
                 />
               </div>
-              
+
               {/* Days per Week */}
               <div className="mb-4">
                 <label htmlFor="q333_daysPer333" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1253,9 +1287,14 @@ const WorkHistoryReport = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g., 4"
                 />
+
+
               </div>
             </div>
-            
+
+
+
+
             {/* Tasks Description */}
             <div className="mb-4">
               <label htmlFor="q334_forThe334" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1270,7 +1309,7 @@ const WorkHistoryReport = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             {/* Reports Description */}
             <div className="mb-4">
               <label htmlFor="q335_ifAny335" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1285,7 +1324,7 @@ const WorkHistoryReport = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             {/* Supervisory Duties */}
             <div className="mb-4">
               <label htmlFor="q206_ifAny206" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1300,7 +1339,7 @@ const WorkHistoryReport = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             {/* Equipment Used */}
             <div className="mb-4">
               <label htmlFor="q207_listThe" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1315,7 +1354,7 @@ const WorkHistoryReport = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             {/* Interaction Checkbox */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1346,7 +1385,7 @@ const WorkHistoryReport = () => {
                 </label>
               </div>
             </div>
-            
+
             {/* Interaction Description */}
             {formData.q209_didThis.includes('Yes') && (
               <div className="mb-4">
@@ -1363,15 +1402,15 @@ const WorkHistoryReport = () => {
                 />
               </div>
             )}
-            
+
             {/* Physical Activities */}
             <div className="mt-6">
               <h4 className="text-sm font-semibold text-gray-900 mb-2">
-                Tell us how much time you spent doing the following physical activities in a typical workday. 
-                The total hours/minutes for standing, walking, and sitting should equal the Hours per Day. 
+                Tell us how much time you spent doing the following physical activities in a typical workday.
+                The total hours/minutes for standing, walking, and sitting should equal the Hours per Day.
                 The example below shows an 8-hour workday with 2 hours standing and walking, and 6 hours sitting (8 hours total).
               </h4>
-              
+
               <div className="overflow-x-auto">
                 <table className="min-w-full border border-gray-200">
                   <thead>
@@ -1417,19 +1456,19 @@ const WorkHistoryReport = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Section 3 - Remarks */}
         <div className="border-b border-gray-200 pb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">SECTION 3 - REMARKS</h2>
-          
+
           <p className="text-sm text-gray-600 mb-4">
-            Please provide any additional information you did not give in earlier parts of this report. 
-            If you did not have enough space in the prior sections of this report to provide the requested information, 
-            please use this space to provide the additional information requested in those sections. Be sure to include 
-            the job title number and question to which you are referring. If you add more jobs than the 5 jobs listed, 
+            Please provide any additional information you did not give in earlier parts of this report.
+            If you did not have enough space in the prior sections of this report to provide the requested information,
+            please use this space to provide the additional information requested in those sections. Be sure to include
+            the job title number and question to which you are referring. If you add more jobs than the 5 jobs listed,
             please provide the same information as you did for job titles numbers 1-5 on a separate sheet of paper(s).
           </p>
-          
+
           <div className="mb-4">
             <label htmlFor="q313_typeA" className="block text-sm font-medium text-gray-700 mb-1">
               Remarks
@@ -1444,11 +1483,11 @@ const WorkHistoryReport = () => {
             />
           </div>
         </div>
-        
+
         {/* Section 4 - Who is Completing This Report */}
         <div className="pb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">SECTION 4 - WHO IS COMPLETING THIS REPORT</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Date Report Completed */}
             <div className="mb-4">
@@ -1465,7 +1504,7 @@ const WorkHistoryReport = () => {
               />
             </div>
           </div>
-          
+
           {/* Who is completing */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1496,7 +1535,7 @@ const WorkHistoryReport = () => {
               </label>
             </div>
           </div>
-          
+
           {/* Name */}
           <div className="mb-4">
             <label htmlFor="q317_name317" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1511,7 +1550,7 @@ const WorkHistoryReport = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          
+
           {/* Relationship */}
           <div className="mb-4">
             <label htmlFor="q318_name318" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1526,7 +1565,7 @@ const WorkHistoryReport = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          
+
           {/* Mailing Address */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1579,7 +1618,7 @@ const WorkHistoryReport = () => {
               />
             </div>
           </div>
-          
+
           {/* Daytime Phone */}
           <div className="mb-4">
             <label htmlFor="q320_daytimePhone" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1596,7 +1635,7 @@ const WorkHistoryReport = () => {
             />
           </div>
         </div>
-        
+
         {/* Submit Button */}
         <div className="flex justify-end">
           <button
