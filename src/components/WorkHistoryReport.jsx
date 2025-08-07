@@ -842,22 +842,24 @@ const WorkHistoryReport = () => {
       ['1 hour'], // Crouching
       ['None'], // Crawling
       ['15 minutes'], // Climbing stairs
-      ['None'] // Climbing ladders
+      ['None'], // Climbing ladders
+     
     ],
-     q212_activities212: [
-    // First row - Using fingers to touch, pick, or pinch
-    [
-      true,  // One Hand checkbox (false = unchecked, true = checked)
-      true,   // Both Hands checkbox
-      "6 hours" // Text input for duration
+      q212_activities212: [
+      // First row - Using fingers to touch, pick, or pinch
+      [
+         true ,     // #input_212_0_0 (One Hand checkbox)
+         false,   // #input_212_0_1 (Both Hands checkbox)
+         "6 hours" // #input_212_0_2 (Text input)
+      ],
+      // Second row - Using hands to seize, hold, grasp, or turn
+      [
+         true,     // #input_212_1_0
+         '',   // #input_212_1_1
+         "3 hours" // #input_212_1_2
+      ],
+     
     ],
-    // Second row - Using hands to seize, hold, grasp, or turn
-    [
-      true,   // One Hand checkbox
-      false,  // Both Hands checkbox
-      "3 hours" // Text input for duration
-    ]
-  ],
 
 
     // Job 2 Details
@@ -906,6 +908,7 @@ const WorkHistoryReport = () => {
       ['15 minutes'], // Climbing stairs
       ['None'] // Climbing ladders
     ],
+
 
     // Section 3 - Remarks
     q313_typeA: 'No additional remarks at this time.',
@@ -962,89 +965,78 @@ const WorkHistoryReport = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    // Prepare the form data for submission
-    const submissionData = new FormData();
+    const handleActivitiesChange = (rowIndex, field, value) => {
+    setFormData(prev => {
+      const updatedActivities = [...prev.q212_activities212];
+      updatedActivities[rowIndex] = {
+        ...updatedActivities[rowIndex],
+        [field]: value
+      };
+      return {
+        ...prev,
+        q212_activities212: updatedActivities
+      };
+    });
+  }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Add all form fields to the submission data
-    Object.entries(formData).forEach(([key, value]) => {
+  const submissionData = new FormData();
+   console.log('Submitting form data:', formData);
+   
+  const flattenData = (data, parentKey = '') => {
+    for (const key in data) {
+      const fullKey = parentKey ? `${parentKey}[${key}]` : key;
+      const value = data[key];
+
       if (Array.isArray(value)) {
-        value.forEach(val => submissionData.append(key, val));
-      } else if (typeof value === 'object' && value !== null) {
-        Object.entries(value).forEach(([subKey, subValue]) => {
-          submissionData.append(`${key}[${subKey}]`, subValue);
+        value.forEach((item, index) => {
+          if (Array.isArray(item)) {
+            item.forEach((subItem, subIndex) => {
+              submissionData.append(`${fullKey}[${index}][${subIndex}]`, subItem);
+            });
+          } else if (typeof item === 'object') {
+            for (const subKey in item) {
+              submissionData.append(`${fullKey}[${index}][${subKey}]`, item[subKey]);
+            }
+          } else {
+            submissionData.append(`${fullKey}[${index}]`, item);
+          }
         });
+      } else if (typeof value === 'object') {
+        flattenData(value, fullKey);
       } else {
-        submissionData.append(key, value);
+        submissionData.append(fullKey, value);
       }
-    });
-
-    // Add matrix data
-    formData.q197_jobs.forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
-        submissionData.append(`q197_jobs[${rowIndex}][${colIndex}]`, cell);
-      });
-    });
-
-    formData.q340_activities340.forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
-        submissionData.append(`q340_activities340[${rowIndex}][${colIndex}]`, cell);
-      });
-    });
-
-
-
-
-    formData.q212_activities212.forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
-        const valueToSend =
-          colIndex < 2 ? (cell ? 'on' : 'off') : cell; // First two columns are checkboxes
-        submissionData.append(
-          `q212_activities212[${rowIndex}][${colIndex}]`,
-          valueToSend
-        );
-      });
-    });
-
-    // Add the column and row IDs that match your HTML structure
-    submissionData.append('q212_activities212[colIds]', '["0","1","2"]');
-    submissionData.append('q212_activities212[rowIds]', '["0","1"]');
-
-
-    // Add matrix row/col IDs
-    submissionData.append('q197_jobs[colIds]', '["0","1","2","3"]');
-    submissionData.append('q197_jobs[rowIds]', '["0","1","2","3","4","5","6","7","8","9"]');
-    submissionData.append('q340_activities340[colIds]', '["0"]');
-    submissionData.append('q340_activities340[rowIds]', '["0","1","2","3","4","5","6","7"]');
-
-    // Add hidden fields from the original form
-    submissionData.append('formID', '241841575846062');
-    submissionData.append('submitSource', 'react-component');
-    submissionData.append('buildDate', Date.now());
-
-    try {
-      const response = await fetch('https://submit.jotform.com/submit/241841575846062', {
-        method: 'POST',
-        body: submissionData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        alert('Form submitted successfully!');
-        // You can redirect or reset the form here if needed
-      } else {
-        throw new Error('Form submission failed');
-      }
-    } catch (error) {
-      console.error('Submission error:', error);
-      alert('There was an error submitting the form. Please try again.');
     }
   };
 
+  flattenData(formData);
+
+  try {
+    const response = await fetch('https://submit.jotform.com/submit/241841575846062', {
+      method: 'POST',
+      body: submissionData,
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      alert('Form submitted successfully!');
+    } else {
+      throw new Error('Form submission failed');
+    }
+  } catch (error) {
+    console.error('Submission error:', error);
+    alert('There was an error submitting the form. Please try again.');
+  }
+};
+
+
+
+  
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -1404,7 +1396,7 @@ const WorkHistoryReport = () => {
             )}
 
             {/* Physical Activities */}
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <h4 className="text-sm font-semibold text-gray-900 mb-2">
                 Tell us how much time you spent doing the following physical activities in a typical workday.
                 The total hours/minutes for standing, walking, and sitting should equal the Hours per Day.
@@ -1453,7 +1445,91 @@ const WorkHistoryReport = () => {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </div> */}
+
+
+              <div className="border-b border-gray-200 pb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Activities</h2>
+          
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-200">
+              <thead>
+                <tr className="bg-blue-600 text-white">
+                  <th className="px-4 py-2 border border-gray-300"></th>
+                  <th className="px-4 py-2 border border-gray-300">One Hand</th>
+                  <th className="px-4 py-2 border border-gray-300">Both Hands</th>
+                  <th className="px-4 py-2 border border-gray-300">
+                    How much of your workday? (Hours/Minutes)
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* First Activity Row */}
+                <tr className="hover:bg-gray-50">
+                  <td className="px-4 py-2 border border-gray-300">
+                    Using fingers to touch, pick, or pinch (e.g., using a mouse, keyboard, turning pages, or buttoning a shirt):
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300 text-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.q212_activities212[0].oneHand}
+                      onChange={(e) => handleActivitiesChange(0, 'oneHand', e.target.checked)}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300 text-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.q212_activities212[0].bothHands}
+                      onChange={(e) => handleActivitiesChange(0, 'bothHands', e.target.checked)}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <input
+                      type="text"
+                      value={formData.q212_activities212[0].duration}
+                      onChange={(e) => handleActivitiesChange(0, 'duration', e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </td>
+                </tr>
+                
+                {/* Second Activity Row */}
+                <tr className="hover:bg-gray-50">
+                  <td className="px-4 py-2 border border-gray-300">
+                    Using hands to seize, hold, grasp, or turn (e.g., holding a large envelope, a small box, a hammer, or water bottle):
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300 text-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.q212_activities212[1].oneHand}
+                      onChange={(e) => handleActivitiesChange(1, 'oneHand', e.target.checked)}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300 text-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.q212_activities212[1].bothHands}
+                      onChange={(e) => handleActivitiesChange(1, 'bothHands', e.target.checked)}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <input
+                      type="text"
+                      value={formData.q212_activities212[1].duration}
+                      onChange={(e) => handleActivitiesChange(1, 'duration', e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
           </div>
         </div>
 
