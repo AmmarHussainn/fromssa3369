@@ -860,6 +860,34 @@ const WorkHistoryReport = () => {
       ],
      
     ],
+     q213_activities213:[
+      [
+        true,
+        '',
+        '20 mins'
+      ],
+      [
+        '',
+        true,
+        '24 hours'
+      ]
+      
+    ],
+    q341_tellUs341:[
+      'No additional comments for this job.'
+    ],
+    q342_selectThe342:[
+     
+      'Less than 1 lb.',
+      'Less than 10 lbs.',
+      '20 lbs.',
+      '50 lbs.',
+      '100 lbs. or more',
+        'other',
+        
+      
+     
+    ],
 
 
     // Job 2 Details
@@ -884,6 +912,7 @@ const WorkHistoryReport = () => {
       ['45 minutes'], // Climbing stairs
       ['15 minutes'] // Climbing ladders
     ],
+   
 
 
     // Job 3 Details
