@@ -803,9 +803,9 @@ const WorkHistoryReport = () => {
   // State for form data
   const [formData, setFormData] = useState({
     // Section 1 - Information About You
-    q190_name: 'John A. Doe Jr.',
+    q190_name: 'Developer.',
     q326_socialSecurity: '123-45-6789',
-    q327_primary327: '(555) 123-4567',
+    q327_primary327: '(155) 123-4567',
     q328_secondaryif328: '(555) 987-6543',
 
     // Section 2 - Work History (Matrix) - 5 jobs
@@ -883,10 +883,7 @@ const WorkHistoryReport = () => {
       '20 lbs.',
       '50 lbs.',
       '100 lbs. or more',
-        'other',
-        
-      
-     
+      'other details are here test tes111t',
     ],
 
 
