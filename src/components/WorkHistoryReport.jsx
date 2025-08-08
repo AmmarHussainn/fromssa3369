@@ -5,7 +5,7 @@ const WorkHistoryReport = () => {
   // State for form data
   const [formData, setFormData] = useState({
     // Section 1 - Information About You
-    q190_name: 'Developer.',
+    q190_name: 'Deve111loper.',
     q326_socialSecurity: '123-45-6789',
     q327_primary327: '(155) 123-4567',
     q328_secondaryif328: '(555) 987-6543',
@@ -17,11 +17,11 @@ const WorkHistoryReport = () => {
       ['Customer Service Rep', 'Telecommunications', '03/2017', '06/2018'],
       ['Delivery Driver', 'Logistics Company', '09/2016', '02/2017'],
       ['Retail Sales', 'Clothing Store', '04/2015', '08/2016'],
-      ['', '', '', ''],
-      ['', '', '', ''],
-      ['', '', '', ''],
-      ['', '', '', ''],
-      ['', '', '', '']
+   ['Cashier', 'Grocery Store', '01/2020', '06/2022'],
+      ['Warehouse Associate', 'Retail Distribution', '07/2018', '12/2019'],
+      ['Customer Service Rep', 'Telecommunications', '03/2017', '06/2018'],
+      ['Delivery Driver', 'Logistics Company', '09/2016', '02/2017'],
+      ['Retail Sales', 'Clothing Store', '04/2015', '08/2016'],
     ],
 
     // Job 1 Details
@@ -126,7 +126,7 @@ const WorkHistoryReport = () => {
     q229_listThe229: 'Used forklift, pallet jack, and handheld scanner for inventory management.',
     q230_didThis230: ['Yes'],
     q231_ifYes: 'Interacted with shipping personnel for about 3 hours per day to coordinate deliveries.',
-    q277_activities277: [
+    q233_activities233: [
       ['4 hours'], // Standing and walking
       ['6 hours'], // Sitting
       ['2 hours'], // Stooping
@@ -239,6 +239,239 @@ const WorkHistoryReport = () => {
       ['15 minutes'], // Climbing stairs
       ['None'] // Climbing ladders
     ],
+
+
+     q256_activities256: [
+      // First row - Using fingers to touch, pick, or pinch
+      [
+        true,     // #input_212_0_0 (One Hand checkbox)
+        false,   // #input_212_0_1 (Both Hands checkbox)
+        "6 hours" // #input_212_0_2 (Text input)
+      ],
+      // Second row - Using hands to seize, hold, grasp, or turn
+      [
+        true,     // #input_212_1_0
+        '',   // #input_212_1_1
+        "3 hours" // #input_212_1_2
+      ],
+
+    ],
+    q257_activities257: [
+      [
+        true,
+        '',
+        '20 mins'
+      ],
+      [
+        '',
+        true,
+        '24 hours'
+      ]
+
+    ],
+    q258_tellUs258: [
+      'No additional comments for this job.'
+    ],
+    q259_selectThe259: [
+
+      'Less than 1 lb.',
+      'Less than 10 lbs.',
+      '20 lbs.',
+      '50 lbs.',
+      '100 lbs. or more',
+      'other details are here test tes111t',
+    ],
+     q260_selectThe260: [
+
+      'Less than 1 lb.',
+      'Less than 10 lbs.',
+      '20 lbs.',
+      '50 lbs.',
+      '100 lbs. or more',
+      'other details are here test tes111t',
+    ],
+    q261_didThis261:[
+      'Outdoors',
+      'Extreme heat (non-weather related)',
+      'Extreme cold (non-weather related)',
+      'Wetness',
+      'Humidity',
+      'Hazardous substances',
+      'Moving mechanical parts',
+      'High, exposed places',
+      'Heavy vibrations',
+      'Loud noises',
+      'othernoicecefefesfsefesfkjhes'
+
+    ],
+    q262_ifOne262: 'No exposure',
+    q263_explainHow263: 'No exposure to environmental factors was noted during the job.',
+
+
+
+
+
+
+    // Job 4 Details
+    q265_jobTitle265: 'Office Administrator',
+    q266_rateOf266: '20.00',
+    q267_percheck267: ['Hour'],
+    q268_hoursPer268: '8',
+    q269_daysPer269: '5',
+    q270_forThe270: 'Managed office operations, scheduled appointments, handled correspondence, maintained files, and ordered supplies.',
+    q271_ifAny271: 'Prepared monthly expense reports which took about 2 hours per month.',
+    q272_ifAny272: 'Supervised 1-2 interns, assigning tasks and reviewing their work.',
+    q273_listThe273: 'Used computer with MS Office, multi-line phone system, and photocopier daily.',
+    q274_didThis274: ['Yes'],
+    q275_ifYes275: 'Interacted with staff and clients for about 4 hours per day, answering phones and greeting visitors.',
+    q277_activities277: [
+      ['3 hours'], // Standing and walking
+      ['5 hours'], // Sitting
+      ['1 hour'], // Stooping
+      ['None'], // Kneeling
+      ['30 minutes'], // Crouching
+      ['None'], // Crawling
+      ['15 minutes'], // Climbing stairs
+      ['None'] // Climbing ladders
+    ],
+    q276_activities278: [
+      [
+        true,
+        '',
+        '6 hours'
+      ],
+      [
+        true,
+        '',
+        '3 hours'
+      ]
+    ],
+    q278_activities279: [
+      [
+        true,
+        '',
+        '15 mins'
+      ],
+      [
+        '',
+        true,
+        '8 hours'
+      ]
+    ],
+    q280_tellUs280: [
+      'Occasionally worked overtime during busy periods.'
+    ],
+    q281_selectThe281: [
+      'Less than 1 lb.',
+      'Less than 10 lbs.',
+      '20 lbs.',
+      'other details are here test tes111t',
+    ],
+    q282_selectThe282: [
+      'Less than 1 lb.',
+      'Less than 10 lbs.',
+      'other details are here test tes111t',
+    ],
+    q283_didThis283: [
+      'Outdoors',
+      'Extreme heat (non-weather related)',
+      'Extreme cold (non-weather related)',
+      'Wetness',
+      'Humidity',
+      'Hazardous substances',
+      'Moving mechanical parts',
+      'High, exposed places',
+      'Heavy vibrations',
+      'Loud noises',
+      'othernoicece1efesfsefesfkjhes'
+
+    ],
+    q284_ifOne284: 'Minimal exposure',
+    q285_explainHow285: 'Occasional exposure to printer toner and office cleaning chemicals.',
+
+    // Job 5 Details
+    q287_jobTitle287: 'Landscaper',
+    q288_rateOf288: '17.50',
+    q289_percheck289: ['Hour'],
+    q290_hoursPer290: '9',
+    q291_daysPer291: '4',
+    q292_forThe292: 'Maintained grounds, planted flowers/shrubs, mowed lawns, trimmed hedges, and applied fertilizers.',
+    q293_ifAny293: 'Completed daily equipment maintenance logs, taking about 15 minutes per day.',
+    q294_ifAny294: 'No supervisory duties.',
+    q295_listThe295: 'Used lawn mower, hedge trimmer, leaf blower, and various hand tools daily.',
+    q296_didThis296: ['Yes'],
+    q297_ifYes297: 'Interacted with clients for about 1 hour per day to discuss landscaping needs.',
+    q299_activities299: [
+      ['7 hours'], // Standing and walking
+      ['1 hour'], // Sitting
+      ['3 hours'], // Stooping
+      ['2 hours'], // Kneeling
+      ['1 hour'], // Crouching
+      ['30 minutes'], // Crawling
+      ['None'], // Climbing stairs
+      ['30 minutes'] // Climbing ladders
+    ],
+    q300_activities300: [
+      [
+        true,
+        '',
+        '6 hours'
+      ],
+      [
+        true,
+        '',
+        '5 hours'
+      ]
+    ],
+    q301_activities301: [
+      [
+        true,
+        '',
+        '1 hour'
+      ],
+      [
+        '',
+        true,
+        '8 hours'
+      ]
+    ],
+    q302_tellUs302: [
+      'Worked in various weather conditions throughout the year.'
+    ],
+    q303_selectThe303: [
+      'Less than 10 lbs.',
+      '20 lbs.',
+      '50 lbs.',
+      '100 lbs. or more',
+      'other details are here test tes111t',
+    ],
+    q304_selectThe304: [
+      'Less than 10 lbs.',
+      '20 lbs.',
+      '50 lbs.',
+      '100 lbs. or more',
+      'other details are here test tes111t',
+    ],
+    q305_didThis305: [
+      'Outdoors',
+      'Extreme heat (non-weather related)',
+      'Extreme cold (non-weather related)',
+      'Wetness',
+      'Humidity',
+      'Hazardous substances',
+      'Moving mechanical parts',
+      'High, exposed places',
+      'Loud noises',
+      'othernoicecefefesfsefesfkjhes'
+    ],
+    q306_ifOne306: 'Frequent exposure',
+    q307_explainHow307: 'test exposure to outdoor elements, loud equipment noise, and landscaping chemicals.',
+
+    
+
+
+
+
 
 
     // Section 3 - Remarks
