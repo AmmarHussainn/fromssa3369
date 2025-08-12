@@ -458,6 +458,15 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
     }));
   };
 
+ const handleJobChange = (index, fieldIndex, value) => {
+  const newJobs = [...formData.q197_jobs];
+  newJobs[index][fieldIndex] = value;
+  setFormData((prev) => ({
+    ...prev,
+    q197_jobs: newJobs,
+  }));
+};
+
   return (
     <div className="form-section bg-[var(--card-bg)] p-6 rounded-lg shadow-md border border-[var(--border-color)] mb-6">
       <div className="section-header bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 -mt-6 mb-6">
@@ -517,6 +526,141 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
             className="form-input"
             placeholder="(XXX) XXX-XXXX"
           />
+        </div>
+
+
+
+        {/* Added q197_jobs section */}
+        <div className="mt-8">
+          <div className="section-header bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 mb-4">
+            <h3 className="text-lg font-semibold">Job History Summary</h3>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-[var(--table-header-bg)] text-[var(--text-color)]">
+                  <th className="p-3 text-left border border-[var(--border-color)]">Job Title</th>
+                  <th className="p-3 text-left border border-[var(--border-color)]">Company</th>
+                  <th className="p-3 text-left border border-[var(--border-color)]">Start Date</th>
+                  <th className="p-3 text-left border border-[var(--border-color)]">End Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {formData.q197_jobs.map((job, index) => (
+                  <tr key={index} className="hover:bg-[var(--table-row-hover)]">
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        value={job[0] || ''}
+                        name={`q197_jobs[${index}][0]`}
+                        onChange={(e) => handleJobChange(index, 0, e.target.value)}
+                        className="w-full p-2 bg-transparent focus:outline-none"
+                        placeholder="Enter title"
+                      />
+                    </td>
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        value={job[1] || ''}
+                        name={`q197_jobs[${index}][1]`}
+                        onChange={(e) => handleJobChange(index, 1, e.target.value)}
+                        className="w-full p-2 bg-transparent focus:outline-none"
+                        placeholder="Enter company"
+                      />
+                    </td>
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        value={job[2] || ''}
+                        name={`q197_jobs[${index}][2]`}
+                        onChange={(e) => handleJobChange(index, 2, e.target.value)}
+                        className="w-full p-2 bg-transparent focus:outline-none"
+                        placeholder="MM/YYYY"
+                      />
+                    </td>
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        name={`q197_jobs[${index}][3]`}
+                        value={job[3] || ''}
+                        onChange={(e) => handleJobChange(index, 3, e.target.value)}
+                        className="w-full p-2 bg-transparent focus:outline-none"
+                        placeholder="MM/YYYY"
+                      />
+                    </td>
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        name={`q197_jobs[${index}][4]`}
+                        value={job[4] || ''}
+                        onChange={(e) => handleJobChange(index, 4, e.target.value)}
+                        className="w-full p-2 bg-transparent focus:outline-none"
+                        placeholder="MM/YYYY"
+                      />
+                    </td>
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        name={`q197_jobs[${index}][5]`}
+                        value={job[5] || ''}
+                        onChange={(e) => handleJobChange(index, 5, e.target.value)}
+                        className="w-full p-2 bg-transparent focus:outline-none"
+                        placeholder="MM/YYYY"
+                      />
+                    </td>
+
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        name={`q197_jobs[${index}][6]`}
+                        value={job[6] || ''}
+                        onChange={(e) => handleJobChange(index, 6, e.target.value)}
+                        className="w-full p-2 bg-transparent focus:outline-none"
+                        placeholder="MM/YYYY"
+                      />
+                    </td>
+
+
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        name={`q197_jobs[${index}][7]`}
+                        value={job[7] || ''}
+                        onChange={(e) => handleJobChange(index, 7, e.target.value)}
+                        className="w-full p-2 bg-transparent focus:outline-none"
+                        placeholder="MM/YYYY"
+                      />
+                    </td>
+
+
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        name={`q197_jobs[${index}][8]`}
+                        value={job[8] || ''}
+                        onChange={(e) => handleJobChange(index, 8, e.target.value)}
+                        className="w-full p-2 bg-transparent focus:outline-none"
+                        placeholder="MM/YYYY"
+                      />
+                    </td>
+
+
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        name={`q197_jobs[${index}][9]`}
+                        value={job[9] || ''}
+                        onChange={(e) => handleJobChange(index, 9, e.target.value)}
+                        className="w-full p-2 bg-transparent focus:outline-none"
+                        placeholder="MM/YYYY"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <div className="flex justify-end mt-8">
@@ -751,7 +895,7 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
   );
 };
 
-const WorkHistoryReport = ({ avatarRef}) => {
+const WorkHistoryReport = ({ avatarRef }) => {
   const [currentSection, setCurrentSection] = useState('personal');
   const [currentJobIndex, setCurrentJobIndex] = useState(1);
   const [totalJobs, setTotalJobs] = useState(1);
@@ -761,7 +905,19 @@ const WorkHistoryReport = ({ avatarRef}) => {
     q326_socialSecurity: '',
     q327_primary327: '',
     q328_secondaryif328: '',
-    q197_jobs: [[], [], [], [], []],
+      q197_jobs: [
+      ['', ' ', '', ''],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      ['', ' ', '', ''],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      ['', '', '', ''],
+      
+    ],
 
     q199_jobTitle: '',
     q330_rateOf330: '',
@@ -916,49 +1072,60 @@ const WorkHistoryReport = ({ avatarRef}) => {
   });
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const submissionData = new FormData();
+  e.preventDefault();
+  const submissionData = new FormData();
 
-    Object.keys(formData).forEach((key) => {
-      if (key.includes('activities')) {
-        Object.entries(formData[key]).forEach(([activity, value]) => {
-          submissionData.append(`${key}[${activity}]`, value);
+  Object.keys(formData).forEach((key) => {
+    if (key.includes('activities')) {
+      Object.entries(formData[key]).forEach(([activity, value]) => {
+        submissionData.append(`${key}[${activity}]`, value);
+      });
+    } else if (key === 'q319_mailingAddress') {
+      Object.entries(formData[key]).forEach(([subKey, value]) => {
+        submissionData.append(`q319_mailingAddress[${subKey}]`, value);
+      });
+    } else if (key === 'q197_jobs') {
+      // Handle q197_jobs matrix table
+      formData[key].forEach((row, rowIndex) => {
+        row.forEach((value, colIndex) => {
+          submissionData.append(`q197_jobs[${rowIndex}][${colIndex}]`, value);
         });
-      } else if (key === 'q319_mailingAddress') {
-        Object.entries(formData[key]).forEach(([subKey, value]) => {
-          submissionData.append(`q319_mailingAddress[${subKey}]`, value);
-        });
-      } else if (Array.isArray(formData[key])) {
-        formData[key].forEach((item, index) => {
-          submissionData.append(`${key}[${index}]`, item);
-        });
-      } else {
-        submissionData.append(key, formData[key]);
-      }
+      });
+      // Append column and row IDs as in the HTML
+      submissionData.append('q197_jobs[colIds]', JSON.stringify(['0', '1', '2', '3']));
+      submissionData.append('q197_jobs[rowIds]', JSON.stringify(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']));
+    } else if (Array.isArray(formData[key])) {
+      formData[key].forEach((item, index) => {
+        submissionData.append(`${key}[${index}]`, item);
+      });
+    } else {
+      submissionData.append(key, formData[key]);
+    }
+  });
+
+  console.log(formData, 'data');
+  try {
+    const response = await fetch('https://submit.jotform.com/submit/241841575846062', {
+      method: 'POST',
+      body: submissionData,
+      headers: {
+        Accept: 'application/json',
+      },
     });
 
-    try {
-      const response = await fetch('https://submit.jotform.com/submit/241841575846062', {
-        method: 'POST',
-        body: submissionData,
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        alert('Form submitted successfully! 🎉');
-      } else {
-        alert('Error submitting form. Please try again.');
-      }
-    } catch (error) {
-      console.error('Submission error:', error);
-      alert('An error occurred while submitting the form.');
+    if (response.ok) {
+      alert('Form submitted successfully! 🎉');
+    } else {
+      alert('Error submitting form. Please try again.');
     }
-  };
+  } catch (error) {
+    console.error('Submission error:', error);
+    alert('An error occurred while submitting the form.');
+  }
+};
 
 
-   const speak = async (message) => {
+  const speak = async (message) => {
     if (avatarRef.current) {
       try {
         await avatarRef.current.speak({
@@ -1037,13 +1204,13 @@ const WorkHistoryReport = ({ avatarRef}) => {
           <div className="flex items-center justify-between mb-2 text-[var(--primary-color)]">
             {['Personal', 'Job 1', 'Job 2', 'Job 3', 'Job 4', 'Job 5', 'Remarks', 'Completion'].map((label, index) => {
               const sectionKey = index === 0 ? 'personal' :
-                                index < 6 ? `job${index}` :
-                                index === 6 ? 'remarks' : 'completion';
+                index < 6 ? `job${index}` :
+                  index === 6 ? 'remarks' : 'completion';
               const isActive = currentSection === sectionKey;
               const isCompleted = (
                 (sectionKey === 'personal' && currentSection !== 'personal') ||
                 (sectionKey.startsWith('job') && parseInt(sectionKey.replace('job', '')) < currentJobIndex ||
-                (sectionKey === 'remarks' && currentSection === 'completion'))
+                  (sectionKey === 'remarks' && currentSection === 'completion'))
               );
 
               return (
