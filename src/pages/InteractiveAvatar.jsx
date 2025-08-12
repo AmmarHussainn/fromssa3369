@@ -180,7 +180,7 @@ const InteractiveAvatar = () => {
     try {
       if (avatarRef.current) {
         await avatarRef.current.speak({
-          text: 'Are you still there? If yes, add more minutes. If not, I will disconnect in 30 seconds.',
+          text: 'Are you still there?  If you need more time, just let me know.  Or, you can choose to fill out the form later—we’ll save your work.  Just click the “Fill Later” button on the first page to complete it on your own time.',
           taskType: TaskType.TALK,
           taskMode: TaskMode.SYNC,
         });

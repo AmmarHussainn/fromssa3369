@@ -323,7 +323,7 @@ const InteractiveSessions = () => {
                 }`}
               >
                 <FaHeadset />
-                <span>Need help? Our support team is available 24/7</span>
+                <span>Our support team is available to help if needed. Call us at (216) 282-1773</span>
               </div>
 
               {/* Gabbi Image */}
