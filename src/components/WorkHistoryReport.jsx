@@ -698,7 +698,7 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
           <div className="bg-white text-[var(--primary-color)] rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">
             👤
           </div>
-          <h2 className="text-xl font-bold">Report Completion Information</h2>
+          <h2 className="text-xl font-bold text-[var(--primary-color)]">Report Completion Information</h2>
         </div>
       </div>
       <div className="space-y-6">
