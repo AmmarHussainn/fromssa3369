@@ -185,7 +185,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               name={fields[jobIndex].title}
               value={formData[fields[jobIndex].title] || ''}
               onChange={handleInputChange}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="Enter job title"
             />
           </div>
@@ -196,7 +196,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               name={fields[jobIndex].rate}
               value={formData[fields[jobIndex].rate] || ''}
               onChange={handleInputChange}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="Enter rate of pay"
             />
           </div>
@@ -208,7 +208,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               name={fields[jobIndex].per}
               value={formData[fields[jobIndex].per] || 'Hour'}
               onChange={handleInputChange}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
             >
               <option value="Hour">Hour</option>
               <option value="Day">Day</option>
@@ -223,7 +223,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               name={fields[jobIndex].hours}
               value={formData[fields[jobIndex].hours] || ''}
               onChange={handleInputChange}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="8"
               min="0"
               max="24"
@@ -236,7 +236,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               name={fields[jobIndex].days}
               value={formData[fields[jobIndex].days] || ''}
               onChange={handleInputChange}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="5"
               min="0"
               max="7"
@@ -250,7 +250,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               name={fields[jobIndex].duties}
               value={formData[fields[jobIndex].duties] || ''}
               onChange={handleInputChange}
-              className="form-textarea"
+              className="form-textarea text-[var(--primary-color)]"
               placeholder="Describe your main job responsibilities..."
               rows="4"
             />
@@ -262,7 +262,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
                 name={fields[jobIndex].admin}
                 value={formData[fields[jobIndex].admin] || ''}
                 onChange={handleInputChange}
-                className="form-textarea"
+                className="form-textarea text-[var(--primary-color)]"
                 placeholder="Describe administrative duties, if any"
                 rows="3"
               />
@@ -273,7 +273,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
                 name={fields[jobIndex].supervise}
                 value={formData[fields[jobIndex].supervise] || ''}
                 onChange={handleInputChange}
-                className="form-textarea"
+                className="form-textarea text-[var(--primary-color)]"
                 placeholder="Describe supervisory duties, if any"
                 rows="3"
               />
@@ -287,7 +287,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               name={fields[jobIndex].tools}
               value={formData[fields[jobIndex].tools] || ''}
               onChange={handleInputChange}
-              className="form-textarea"
+              className="form-textarea text-[var(--primary-color)]"
               placeholder="List machines, tools, or equipment used"
               rows="3"
             />
@@ -299,7 +299,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
                 name={fields[jobIndex].interact}
                 value={formData[fields[jobIndex].interact] || 'Yes'}
                 onChange={handleInputChange}
-                className="form-input"
+                className="form-input text-[var(--primary-color)]"
               >
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
@@ -312,7 +312,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
                   name={fields[jobIndex].interactDetails}
                   value={formData[fields[jobIndex].interactDetails] || ''}
                   onChange={handleInputChange}
-                  className="form-textarea"
+                  className="form-textarea text-[var(--primary-color)]"
                   placeholder="Describe customer interaction"
                   rows="2"
                 />
@@ -330,7 +330,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
                   type="number"
                   value={formData[fields[jobIndex].activities]?.[activity] || ''}
                   onChange={(e) => handleActivityChange(e, activity)}
-                  className="form-input"
+                  className="form-input text-[var(--primary-color)]"
                   placeholder="0"
                   min="0"
                   max="24"
@@ -346,7 +346,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
       type="number"
       value={formData[fields[jobIndex].activities]?.[index]?.[0] || ''}
       onChange={(e) => handleActivityChange(e, index)}
-      className="form-input"
+      className="form-input text-[var(--primary-color)]"
       placeholder="0"
       min="0"
       max="24"
@@ -433,7 +433,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
             name={fields[jobIndex].comments}
             value={formData[fields[jobIndex].comments] || ''}
             onChange={handleInputChange}
-            className="form-textarea"
+            className="form-textarea text-[var(--primary-color)]"
             placeholder="Any additional comments about this job"
             rows="3"
           />
@@ -506,7 +506,7 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
             name="q190_name"
             value={formData.q190_name}
             onChange={handleInputChange}
-            className="form-input"
+            className="form-input text-[var(--primary-color)]"
             placeholder="Enter your full name"
             required
           />
@@ -518,7 +518,7 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
             name="q326_socialSecurity"
             value={formData.q326_socialSecurity}
             onChange={handleInputChange}
-            className="form-input"
+            className="form-input text-[var(--primary-color)]"
             placeholder="XXX-XX-XXXX"
           />
         </div>
@@ -529,7 +529,7 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
             name="q327_primary327"
             value={formData.q327_primary327}
             onChange={handleInputChange}
-            className="form-input"
+            className="form-input text-[var(--primary-color)]"
             placeholder="(XXX) XXX-XXXX"
             required
           />
@@ -541,7 +541,7 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
             name="q328_secondaryif328"
             value={formData.q328_secondaryif328}
             onChange={handleInputChange}
-            className="form-input"
+            className="form-input text-[var(--primary-color)]"
             placeholder="(XXX) XXX-XXXX"
           />
         </div>
@@ -647,7 +647,7 @@ const RemarksSection = ({ formData, setFormData, onNext, onPrev }) => {
           name="q313_typeA"
           value={formData.q313_typeA}
           onChange={handleInputChange}
-          className="form-textarea"
+          className="form-textarea text-[var(--primary-color)]"
           placeholder="Enter any additional remarks or information..."
           rows="6"
         />
@@ -710,7 +710,7 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
               name="q315_dateReport"
               value={formData.q315_dateReport}
               onChange={handleInputChange}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="MM/DD/YYYY"
             />
           </div>
@@ -720,7 +720,7 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
               name="q316_whoIs"
               value={formData.q316_whoIs}
               onChange={handleInputChange}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
             >
               <option value="Myself">Myself</option>
               <option value="Other">Other</option>
@@ -735,7 +735,7 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
               name="q317_name317"
               value={formData.q317_name317}
               onChange={handleInputChange}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="Enter name"
             />
           </div>
@@ -746,7 +746,7 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
               name="q318_name318"
               value={formData.q318_name318}
               onChange={handleInputChange}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="Enter relationship"
             />
           </div>
@@ -758,14 +758,14 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
               type="text"
               value={formData.q319_mailingAddress.addr_line1}
               onChange={(e) => handleAddressChange('addr_line1', e.target.value)}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="Address Line 1"
             />
             <input
               type="text"
               value={formData.q319_mailingAddress.addr_line2}
               onChange={(e) => handleAddressChange('addr_line2', e.target.value)}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="Address Line 2"
             />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -773,21 +773,21 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
                 type="text"
                 value={formData.q319_mailingAddress.city}
                 onChange={(e) => handleAddressChange('city', e.target.value)}
-                className="form-input"
+                className="form-input text-[var(--primary-color)]"
                 placeholder="City"
               />
               <input
                 type="text"
                 value={formData.q319_mailingAddress.state}
                 onChange={(e) => handleAddressChange('state', e.target.value)}
-                className="form-input"
+                className="form-input text-[var(--primary-color)]"
                 placeholder="State"
               />
               <input
                 type="text"
                 value={formData.q319_mailingAddress.postal}
                 onChange={(e) => handleAddressChange('postal', e.target.value)}
-                className="form-input"
+                className="form-input text-[var(--primary-color)]"
                 placeholder="Postal Code"
               />
             </div>
@@ -795,7 +795,7 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
               type="text"
               value={formData.q319_mailingAddress.country}
               onChange={(e) => handleAddressChange('country', e.target.value)}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="Country"
             />
           </div>
@@ -807,7 +807,7 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
             name="q320_daytimePhone"
             value={formData.q320_daytimePhone}
             onChange={handleInputChange}
-            className="form-input"
+            className="form-input text-[var(--primary-color)]"
             placeholder="(XXX) XXX-XXXX"
           />
         </div>
@@ -1285,31 +1285,23 @@ const WorkHistoryReport = ({ avatarRef }) => {
           width: 100%;
           padding: 0.75rem 1rem;
           background-color: var(--input-bg);
-          color: var(--input-text);
+          
           border: 1px solid var(--border-color);
           border-radius: 0.375rem;
           transition: all 0.2s;
         }
-        .form-input:focus {
-          outline: none;
-          border-color: var(--primary-color);
-          box-shadow: 0 0 0 2px var(--primary-color);
-        }
+        
         .form-textarea {
           width: 100%;
           padding: 0.75rem 1rem;
           background-color: var(--input-bg);
-          color: var(--input-text);
+          
           border: 1px solid var(--border-color);
           border-radius: 0.375rem;
           transition: all 0.2s;
           resize: vertical;
         }
-        .form-textarea:focus {
-          outline: none;
-          border-color: var(--primary-color);
-          box-shadow: 0 0 0 2px var(--primary-color);
-        }
+       
         .checkbox-label {
           display: flex;
           align-items: center;
@@ -1320,9 +1312,7 @@ const WorkHistoryReport = ({ avatarRef }) => {
           cursor: pointer;
           transition: all 0.2s;
         }
-        .checkbox-label:hover {
-          border-color: var(--primary-color);
-        }
+        
         .checkbox-input {
           margin-right: 0.75rem;
           accent-color: var(--primary-color);
