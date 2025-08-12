@@ -61,8 +61,8 @@ const InteractiveSessions = () => {
 
   const downloadPDF = () => {
     const link = document.createElement('a');
-    link.href = '/prepform.pdf';
-    link.download = 'ss-prepform.pdf';
+    link.href = 'https://form.jotform.com/241841575846062';
+    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -183,10 +183,7 @@ const InteractiveSessions = () => {
 
             <ul className='list-none p-0 mb-10'>
               {[
-                {
-                  icon: <FaRobot />,
-                  text: 'Powered by MeetGabbi AI Virtual Assistant',
-                },
+                
                 {
                   icon: <FaClock />,
                   text: 'Only takes 5–10 minutes to complete',
@@ -225,6 +222,27 @@ const InteractiveSessions = () => {
                 </li>
               ))}
             </ul>
+
+
+
+
+{/* Added Note Section */}
+<div
+  className={`p-4 mb-8 rounded-xl border text-sm transition-all duration-400 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
+    isLightMode
+      ? 'bg-[#f5faff] border-[#cce7f6] text-[#2c3e50]/80'
+      : 'bg-white/5 border-white/10 text-white/80'
+  }`}
+>
+  <strong className="block mb-1">Note:</strong>
+  We use this AI tool to collect important information and help speed up
+  the process of getting you the support you need.
+  <br />
+  If you're ever uncomfortable answering a question, feel free to skip
+  ahead. You can also choose to complete the form manually at your own
+  pace.
+</div>
+
             <div className='flex gap-3'>
               <button
                 className={`bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white py-4 px-10 text-xl font-semibold rounded-xl cursor-pointer transition-all duration-400 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] relative overflow-hidden shadow-lg inline-flex items-center gap-3 mt-4 ${

@@ -104,6 +104,7 @@ const InteractiveAvatar = () => {
   const API_KEY = import.meta.env.VITE_HEYGEN_API_KEY;
   const API_URL = import.meta.env.VITE_NEXT_PUBLIC_BASE_API_URL;
   const DEFAULT_AVATAR_ID = '3c592a67d01344f5b1d398d169e4b7d4';
+  const KNOWLEDGE_BASE_ID = '99988f6009b348b99b11e8a17dd939f9';
 
   const updateActivity = () => {
     setLastActivityTime(Date.now());
@@ -230,6 +231,7 @@ const InteractiveAvatar = () => {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     const lastMessage = chat[chat.length - 1];
+    console.log('Chat updated:', chat);
     if (
       lastMessage &&
       lastMessage.type === 'avatar' &&
@@ -243,6 +245,7 @@ const InteractiveAvatar = () => {
       setShowForm(true);
     }
   }, [chat, showForm]);
+  
 
   useEffect(() => {
     chatModeRef.current = chatMode;
@@ -352,9 +355,10 @@ const InteractiveAvatar = () => {
         voice: { rate: 1.2, emotion: VoiceEmotion.NEUTRAL },
         language: 'en',
         disableIdleTimeout: true,
+        knowledgeId: KNOWLEDGE_BASE_ID,
       });
       await avatarRef.current.speak({
-        text: 'Hi there! I am here to virtually help and guide you through the Social Security Application Prep Form. Each section is needed and important to move forward with your case. When ready to begin, type or say: ‘Ready to begin’',
+        text: 'Hi there! I am here to virtually help and guide you through the Work History Report. Each section is needed and important to move forward with your case. When ready to begin, type or say: ‘Ready to begin’',
         taskType: TaskType.REPEAT,
         taskMode: TaskMode.SYNC,
       });
@@ -436,6 +440,7 @@ const InteractiveAvatar = () => {
         text: text,
         taskType: TaskType.TALK,
         taskMode: TaskMode.SYNC,
+        knowledgeId: KNOWLEDGE_BASE_ID,
       });
       setText('');
     } catch (error) {
@@ -504,30 +509,30 @@ const InteractiveAvatar = () => {
 
 
   useEffect(() => {
-  if (showForm) {
-    const script1 = document.createElement('script');
-    script1.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
-    script1.async = true;
-    script1.onload = () => {
-      console.log('JotForm embed script loaded');
-      const script2 = document.createElement('script');
-      script2.text = `window.jotformEmbedHandler("iframe[id='JotFormIFrame-241841575846062']", "https://form.jotform.com/")`;
-      document.body.appendChild(script2);
-    };
-    script1.onerror = () => {
-      console.error('Failed to load JotForm embed script');
-    };
-    document.body.appendChild(script1);
+    if (showForm) {
+      const script1 = document.createElement('script');
+      script1.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+      script1.async = true;
+      script1.onload = () => {
+        console.log('JotForm embed script loaded');
+        const script2 = document.createElement('script');
+        script2.text = `window.jotformEmbedHandler("iframe[id='JotFormIFrame-241841575846062']", "https://form.jotform.com/")`;
+        document.body.appendChild(script2);
+      };
+      script1.onerror = () => {
+        console.error('Failed to load JotForm embed script');
+      };
+      document.body.appendChild(script1);
 
-    return () => {
-      const script2 = document.querySelector(
-        `script[textContent*="JotFormIFrame-241841575846062"]`
-      );
-      if (script2) document.body.removeChild(script2);
-      document.body.removeChild(script1);
-    };
-  }
-}, [showForm]);
+      return () => {
+        const script2 = document.querySelector(
+          `script[textContent*="JotFormIFrame-241841575846062"]`
+        );
+        if (script2) document.body.removeChild(script2);
+        document.body.removeChild(script1);
+      };
+    }
+  }, [showForm]);
 
   return (
     <div className="bg-[var(--card-bg)] w-screen h-screen">
@@ -648,8 +653,8 @@ const InteractiveAvatar = () => {
                         onClick={startSession}
                         disabled={isLoading}
                         className={`w-full py-3 cursor-pointer px-4 rounded-lg font-medium text-white ${isLoading
-                            ? 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
-                            : 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
+                          ? 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
+                          : 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
                           }`}
                       >
                         {isLoading ? (
@@ -673,8 +678,8 @@ const InteractiveAvatar = () => {
                   <button
                     onClick={() => handleChatModeChange('text_mode')}
                     className={`flex-1 cursor-pointer py-2 font-medium ${chatMode === 'text_mode'
-                        ? 'text-[var(--primary-color)] border-b-2 border-[var(--primary-color)]'
-                        : 'text-[var(--primary-color)]'
+                      ? 'text-[var(--primary-color)] border-b-2 border-[var(--primary-color)]'
+                      : 'text-[var(--primary-color)]'
                       }`}
                     aria-label="Text Mode"
                   >
@@ -686,8 +691,8 @@ const InteractiveAvatar = () => {
                   <button
                     onClick={() => handleChatModeChange('voice_mode')}
                     className={`flex-1 cursor-pointer py-2 font-medium ${chatMode === 'voice_mode'
-                        ? 'text-[var(--primary-color)] border-b-2 border-[var(--primary-color)]'
-                        : 'text-[var(--primary-color)]'
+                      ? 'text-[var(--primary-color)] border-b-2 border-[var(--primary-color)]'
+                      : 'text-[var(--primary-color)]'
                       }`}
                     aria-label="Voice Mode"
                   >
@@ -725,8 +730,8 @@ const InteractiveAvatar = () => {
                 ) : (
                   <div
                     className={`p-3 mt-4 rounded-full text-center ${isUserTalking
-                        ? 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
-                        : 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
+                      ? 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
+                      : 'bg-gradient-to-br from-[#097FCD] to-[#0B3759] text-white'
                       }`}
                   >
                     {isUserTalking ? (
@@ -755,31 +760,32 @@ const InteractiveAvatar = () => {
               //   setToggleForm={setToggleForm}
               // />
               <WorkHistoryReport
-                  avatarRef={avatarRef}
+                avatarRef={avatarRef}
                 toggleForm={toggleForm}
                 setToggleForm={setToggleForm}
                 onCancel={() => setShowForm(false)}
+                toggleTheme={toggleTheme}
               />
 
-      //         <div className="w-full h-full flex items-center  justify-center bg-blue-100">
-      //   <iframe
-      //     id="JotFormIFrame-241841575846062"
-      //     title="WORK HISTORY REPORT"
-      //     allow="geolocation; microphone; camera; fullscreen; payment"
-      //     src="https://form.jotform.com/241841575846062"
-      //     frameBorder="0"
-      //     style={{ minWidth: '100%', maxWidth: '100%', border: 'none' }}
-      //     scrolling="yes"
-      //     onError={() => console.error('Iframe failed to load')}
-      //     className='!h-[890px]'
-      //   />
+              //         <div className="w-full h-full flex items-center  justify-center bg-blue-100">
+              //   <iframe
+              //     id="JotFormIFrame-241841575846062"
+              //     title="WORK HISTORY REPORT"
+              //     allow="geolocation; microphone; camera; fullscreen; payment"
+              //     src="https://form.jotform.com/241841575846062"
+              //     frameBorder="0"
+              //     style={{ minWidth: '100%', maxWidth: '100%', border: 'none' }}
+              //     scrolling="yes"
+              //     onError={() => console.error('Iframe failed to load')}
+              //     className='!h-[890px]'
+              //   />
 
 
 
 
 
-        
-      // </div>
+
+              // </div>
             ) : (
               <div className="bg-[var(--card-bg)] flex rounded-2xl shadow-xl h-full flex-col">
                 <div className="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-t-2xl text-[var(--primary-color)] px-6 py-3 flex justify-between items-center">
