@@ -173,7 +173,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
           <div className="bg-white text-[var(--primary-color)] rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">
             {jobIndex}
           </div>
-          <h2 className="text-xl font-bold">Job {jobIndex} Details</h2>
+          <h2 className="text-xl font-bold text-[var(--primary-color)]">Job {jobIndex} Details</h2>
         </div>
       </div>
       <div className="space-y-6">
@@ -321,7 +321,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
           </div>
         </div>
         <div className="form-section bg-[var(--secondary-color)] p-6 rounded-lg">
-          <h3 className="section-subheader">Physical Activities (Hours per Day)</h3>
+          <h3 className="section-subheader text-[var(--primary-color)]">Physical Activities (Hours per Day)</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* {Object.entries(activityLabels).map(([activity, label]) => (
               <div key={activity} className="form-group">
@@ -357,26 +357,26 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
 
           </div>
         </div>
-        <div className="form-section bg-[var(--secondary-color)] p-6 rounded-lg">
-          <h3 className="section-subheader">Weights Lifted (Check all that apply)</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="form-section bg-[var(--secondary-color)] p-6 text-[var(--primary-color)] rounded-lg">
+          <h3 className="section-subheader text-[var(--primary-color)] ">Weights Lifted (Check all that apply)</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3  !text-[var(--primary-color)]">
             {['Less than 1 lb.', 'Less than 10 lbs.', '20 lbs.', '50 lbs.', '100 lbs. or more', 'Other'].map((weight) => (
-              <label key={weight} className="checkbox-label">
+              <label key={weight} className="checkbox-label text-[var(--primary-color)] ">
                 <input
                   type="checkbox"
                   value={weight}
                   checked={formData[fields[jobIndex].weights]?.includes(weight) || false}
                   onChange={(e) => handleCheckboxArrayChange(e, fields[jobIndex].weights)}
-                  className="checkbox-input"
+                  className="checkbox-input text-[var(--primary-color)]"
                 />
-                <span className="checkbox-text">{weight}</span>
+                <span className="checkbox-text text-[var(--primary-color)]">{weight}</span>
               </label>
             ))}
           </div>
         </div>
         <div className="form-section bg-[var(--secondary-color)] p-6 rounded-lg">
-          <h3 className="section-subheader">Environmental Conditions (Check all that apply)</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <h3 className="section-subheader !text-[var(--primary-color)]">Environmental Conditions (Check all that apply)</h3>
+          <div className="grid grid-cols-1 !text-[var(--primary-color)] md:grid-cols-2 lg:grid-cols-3 gap-3">
             {[
               'Outdoors',
               'Extreme heat (non-weather related)',
@@ -390,15 +390,15 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               'Loud noises',
               'Other',
             ].map((condition) => (
-              <label key={condition} className="checkbox-label">
+              <label key={condition} className="checkbox-label text-[var(--primary-color)]">
                 <input
                   type="checkbox"
                   value={condition}
                   checked={formData[fields[jobIndex].conditions]?.includes(condition) || false}
                   onChange={(e) => handleCheckboxArrayChange(e, fields[jobIndex].conditions)}
-                  className="checkbox-input"
+                  className="checkbox-input text-[var(--primary-color)] "
                 />
-                <span className="checkbox-text">{condition}</span>
+                <span className="checkbox-text text-[var(--primary-color)]">{condition}</span>
               </label>
             ))}
           </div>
@@ -411,7 +411,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               name={fields[jobIndex].exposure}
               value={formData[fields[jobIndex].exposure] || ''}
               onChange={handleInputChange}
-              className="form-input"
+              className="form-input text-[var(--primary-color)]"
               placeholder="Describe exposure frequency"
             />
           </div>
@@ -421,14 +421,14 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               name={fields[jobIndex].exposureDetails}
               value={formData[fields[jobIndex].exposureDetails] || ''}
               onChange={handleInputChange}
-              className="form-textarea"
+              className="form-textarea text-[var(--primary-color)]"
               placeholder="Explain exposure details"
               rows="3"
             />
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label">Additional Comments</label>
+          <label className="form-label text-[var(--primary-color)]">Additional Comments</label>
           <textarea
             name={fields[jobIndex].comments}
             value={formData[fields[jobIndex].comments] || ''}
@@ -547,28 +547,28 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
         </div>
         <div className="mt-8">
           <div className="section-header bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 mb-4">
-            <h3 className="text-lg font-semibold">Job History Summary</h3>
+            <h3 className="text-lg font-semibold text-[var(--primary-color)]">Job History Summary</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-[var(--table-header-bg)] text-[var(--text-color)]">
-                  <th className="p-3 text-left border border-[var(--border-color)]">Job Title</th>
-                  <th className="p-3 text-left border border-[var(--border-color)]">Company</th>
-                  <th className="p-3 text-left border border-[var(--border-color)]">Start Date</th>
-                  <th className="p-3 text-left border border-[var(--border-color)]">End Date</th>
+                <tr className="bg-[var(--table-header-bg)] text-[var(--primary-color)]">
+                  <th className="p-3 text-left border border-[var(--border-primary)] text-[var(--primary-color)]">Job Title</th>
+                  <th className="p-3 text-left border border-[var(--border-primary)] text-[var(--primary-color)]">Company</th>
+                  <th className="p-3 text-left border border-[var(--border-primary)] text-[var(--primary-color)]">Start Date</th>
+                  <th className="p-3 text-left border border-[var(--border-primary)] text-[var(--primary-color)]">End Date</th>
                 </tr>
               </thead>
               <tbody>
                 {formData.q197_jobs.map((job, index) => (
                   <tr key={index} className="hover:bg-[var(--table-row-hover)]">
-                    <td className="p-2 border border-[var(--border-color)]">
+                    <td className="p-2 border border-[var(--border-color)] text-[var(--primary-color)]">
                       <input
                         type="text"
                         value={job[0] || ''}
                         name={`q197_jobs[${index}][0]`}
                         onChange={(e) => handleJobChange(index, 0, e.target.value)}
-                        className="w-full p-2 bg-transparent focus:outline-none"
+                        className="w-full p-2 bg-transparent  text-[var(--primary-color)]focus:outline-none"
                         placeholder="Enter title"
                       />
                     </td>
@@ -578,27 +578,27 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
                         value={job[1] || ''}
                         name={`q197_jobs[${index}][1]`}
                         onChange={(e) => handleJobChange(index, 1, e.target.value)}
-                        className="w-full p-2 bg-transparent focus:outline-none"
+                        className="w-full p-2 bg-transparent text-[var(--primary-color)] focus:outline-none"
                         placeholder="Enter company"
                       />
                     </td>
-                    <td className="p-2 border border-[var(--border-color)]">
+                    <td className="p-2 border border-[var(--border-color)] text-[var(--primary-color)]">
                       <input
                         type="text"
                         value={job[2] || ''}
                         name={`q197_jobs[${index}][2]`}
                         onChange={(e) => handleJobChange(index, 2, e.target.value)}
-                        className="w-full p-2 bg-transparent focus:outline-none"
+                        className="w-full p-2 bg-transparent  text-[var(--primary-color)] focus:outline-none"
                         placeholder="MM/YYYY"
                       />
                     </td>
-                    <td className="p-2 border border-[var(--border-color)]">
+                    <td className="p-2 border text-[var(--primary-color)] border-[var(--border-color)]">
                       <input
                         type="text"
                         name={`q197_jobs[${index}][3]`}
                         value={job[3] || ''}
                         onChange={(e) => handleJobChange(index, 3, e.target.value)}
-                        className="w-full p-2 bg-transparent focus:outline-none"
+                        className="w-full p-2 bg-transparent text-[var(--primary-color)] focus:outline-none"
                         placeholder="MM/YYYY"
                       />
                     </td>
@@ -638,7 +638,7 @@ const RemarksSection = ({ formData, setFormData, onNext, onPrev }) => {
           <div className="bg-white text-[var(--primary-color)] rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">
             📝
           </div>
-          <h2 className="text-xl font-bold">Additional Remarks</h2>
+          <h2 className="text-xl font-bold text-[var(--primary-color)]">Additional Remarks</h2>
         </div>
       </div>
       <div className="form-group">
@@ -1329,7 +1329,7 @@ const WorkHistoryReport = ({ avatarRef }) => {
         }
         .checkbox-text {
           font-size: 0.875rem;
-          color: var(--text-color);
+          
         }
       `}</style>
     </div>
