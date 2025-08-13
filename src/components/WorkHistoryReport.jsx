@@ -18,32 +18,40 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
     }));
   };
 
-  // const handleActivityChange = (e, field) => {
-  //   const { value } = e.target;
-  //   const activitiesFieldName = fields[jobIndex].activities;
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     [activitiesFieldName]: {
-  //       ...prev[activitiesFieldName],
-  //       [field]: value,
-  //     },
-  //   }));
-  // };
 
 
   const handleActivityChange = (e, fieldIndex) => {
-  const { value } = e.target;
-  const activitiesFieldName = fields[jobIndex].activities;
-  setFormData((prev) => {
-    const newActivities = [...(prev[activitiesFieldName] || [[''], [''], [''], [''], [''], [''], [''], ['']])];
-    newActivities[fieldIndex][0] = value;
-    return {
-      ...prev,
-      [activitiesFieldName]: newActivities,
-    };
-  });
-};
+    const { value } = e.target;
+    const activitiesFieldName = fields[jobIndex].activities;
+    setFormData((prev) => {
+      const newActivities = [...(prev[activitiesFieldName] || [[''], [''], [''], [''], [''], [''], [''], ['']])];
+      newActivities[fieldIndex][0] = value;
+      return {
+        ...prev,
+        [activitiesFieldName]: newActivities,
+      };
+    });
+  };
+  const handleHandArmActivityChange = (e, activityType, rowIndex, colIndex) => {
+    const { value, type, checked } = e.target;
+    const fieldName = fields[jobIndex][activityType];
 
+    setFormData(prev => {
+      const currentActivities = prev[fieldName] || [[false, false, ''], [false, false, '']];
+      const newActivities = [...currentActivities];
+
+      if (type === 'checkbox') {
+        newActivities[rowIndex][colIndex] = checked;
+      } else {
+        newActivities[rowIndex][colIndex] = value;
+      }
+
+      return {
+        ...prev,
+        [fieldName]: newActivities,
+      };
+    });
+  };
   const handleCheckboxArrayChange = (e, fieldName) => {
     const { value, checked } = e.target;
     setFormData((prev) => {
@@ -71,6 +79,8 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
       interact: 'q209_didThis',
       interactDetails: 'q208_listThe208',
       activities: 'q340_activities340',
+      handActivities: 'q212_activities212',
+      armActivities: 'q213_activities213',
       comments: 'q341_tellUs341',
       weights: 'q342_selectThe342',
       conditions: 'q344_didThis344',
@@ -90,6 +100,8 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
       interact: 'q230_didThis230',
       interactDetails: 'q231_ifYes',
       activities: 'q233_activities233',
+      handActivities: 'q234_activities234',
+      armActivities: 'q235_activities235',
       comments: 'q236_tellUs236',
       weights: 'q237_selectThe237',
       conditions: 'q239_didThis239',
@@ -109,6 +121,8 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
       interact: 'q252_didThis252',
       interactDetails: 'q253_ifYes253',
       activities: 'q255_activities255',
+      handActivities: 'q256_activities256',
+      armActivities: 'q257_activities257',
       comments: 'q258_tellUs258',
       weights: 'q259_selectThe259',
       conditions: 'q261_didThis261',
@@ -128,6 +142,8 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
       interact: 'q274_didThis274',
       interactDetails: 'q275_ifYes275',
       activities: 'q277_activities277',
+      handActivities: 'q276_activities278',
+      armActivities: 'q278_activities279',
       comments: 'q280_tellUs280',
       weights: 'q281_selectThe281',
       conditions: 'q283_didThis283',
@@ -147,6 +163,8 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
       interact: 'q296_didThis296',
       interactDetails: 'q297_ifYes297',
       activities: 'q299_activities299',
+      handActivities: 'q300_activities300',
+      armActivities: 'q301_activities301',
       comments: 'q302_tellUs302',
       weights: 'q303_selectThe303',
       conditions: 'q305_didThis305',
@@ -165,6 +183,17 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
     climbingStairs: 'Climbing Stairs',
     climbingLadders: 'Climbing Ladders',
   };
+
+  const handActivityLabels = [
+    'Using fingers to touch, pick, or pinch (e.g., using a mouse, keyboard, turning pages, or buttoning a shirt)',
+    'Using hands to seize, hold, grasp, or turn (e.g., holding a large envelope, a small box, a hammer, or water bottle)'
+  ];
+
+  const armActivityLabels = [
+    'Reaching at or below the shoulder',
+    'Reaching overhead (above the shoulder)'
+  ];
+
 
   return (
     <div className="form-section bg-[var(--card-bg)] p-6 rounded-lg h-[900px] shadow-md border border-[var(--border-color)] mb-6">
@@ -323,13 +352,15 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
         <div className="form-section bg-[var(--secondary-color)] p-6 rounded-lg">
           <h3 className="section-subheader text-[var(--primary-color)]">Physical Activities (Hours per Day)</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* {Object.entries(activityLabels).map(([activity, label]) => (
+
+
+            {Object.entries(activityLabels).map(([activity, label], index) => (
               <div key={activity} className="form-group">
                 <label className="form-label">{label}</label>
                 <input
                   type="number"
-                  value={formData[fields[jobIndex].activities]?.[activity] || ''}
-                  onChange={(e) => handleActivityChange(e, activity)}
+                  value={formData[fields[jobIndex].activities]?.[index]?.[0] || ''}
+                  onChange={(e) => handleActivityChange(e, index)}
                   className="form-input text-[var(--primary-color)]"
                   placeholder="0"
                   min="0"
@@ -337,26 +368,110 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
                   step="0.5"
                 />
               </div>
-            ))} */}
-
-            {Object.entries(activityLabels).map(([activity, label], index) => (
-  <div key={activity} className="form-group">
-    <label className="form-label">{label}</label>
-    <input
-      type="number"
-      value={formData[fields[jobIndex].activities]?.[index]?.[0] || ''}
-      onChange={(e) => handleActivityChange(e, index)}
-      className="form-input text-[var(--primary-color)]"
-      placeholder="0"
-      min="0"
-      max="24"
-      step="0.5"
-    />
-  </div>
-))}
+            ))}
 
           </div>
         </div>
+
+
+
+        <div className="form-section bg-[var(--secondary-color)] p-6 rounded-lg">
+  <h3 className="section-subheader text-[var(--primary-color)]">Hand Activities</h3>
+  <table className="w-full border-collapse">
+    <thead>
+      <tr>
+        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Activity</th>
+        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">One Hand</th>
+        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Both Hands</th>
+        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">How much of your workday? (Hours/Minutes)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {handActivityLabels.map((label, rowIndex) => {
+        const currentActivities = formData[fields[jobIndex].handActivities] || [[false, false, ''], [false, false, '']];
+        return (
+          <tr key={rowIndex}>
+            <td className="p-2 border border-[var(--border-color)] text-[var(--primary-color)]">{label}</td>
+            <td className="p-2 border border-[var(--border-color)] text-center">
+              <input
+                type="checkbox"
+                checked={currentActivities[rowIndex]?.[0] || false}
+                onChange={(e) => handleHandArmActivityChange(e, 'handActivities', rowIndex, 0)}
+                className="checkbox-input"
+              />
+            </td>
+            <td className="p-2 border border-[var(--border-color)] text-center">
+              <input
+                type="checkbox"
+                checked={currentActivities[rowIndex]?.[1] || false}
+                onChange={(e) => handleHandArmActivityChange(e, 'handActivities', rowIndex, 1)}
+                className="checkbox-input"
+              />
+            </td>
+            <td className="p-2 border border-[var(--border-color)]">
+              <input
+                type="text"
+                value={currentActivities[rowIndex]?.[2] || ''}
+                onChange={(e) => handleHandArmActivityChange(e, 'handActivities', rowIndex, 2)}
+                className="form-input w-full"
+                placeholder="e.g. 2 hours"
+              />
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
+
+<div className="form-section bg-[var(--secondary-color)] p-6 rounded-lg">
+  <h3 className="section-subheader text-[var(--primary-color)]">Arm Activities</h3>
+  <table className="w-full border-collapse">
+    <thead>
+      <tr>
+        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Activity</th>
+        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">One Arm</th>
+        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Both Arms</th>
+        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">How much of your workday? (Hours/Minutes)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {armActivityLabels.map((label, rowIndex) => {
+        const currentActivities = formData[fields[jobIndex].armActivities] || [[false, false, ''], [false, false, '']];
+        return (
+          <tr key={rowIndex}>
+            <td className="p-2 border border-[var(--border-color)] text-[var(--primary-color)]">{label}</td>
+            <td className="p-2 border border-[var(--border-color)] text-center">
+              <input
+                type="checkbox"
+                checked={currentActivities[rowIndex]?.[0] || false}
+                onChange={(e) => handleHandArmActivityChange(e, 'armActivities', rowIndex, 0)}
+                className="checkbox-input"
+              />
+            </td>
+            <td className="p-2 border border-[var(--border-color)] text-center">
+              <input
+                type="checkbox"
+                checked={currentActivities[rowIndex]?.[1] || false}
+                onChange={(e) => handleHandArmActivityChange(e, 'armActivities', rowIndex, 1)}
+                className="checkbox-input"
+              />
+            </td>
+            <td className="p-2 border border-[var(--border-color)]">
+              <input
+                type="text"
+                value={currentActivities[rowIndex]?.[2] || ''}
+                onChange={(e) => handleHandArmActivityChange(e, 'armActivities', rowIndex, 2)}
+                className="form-input w-full"
+                placeholder="e.g. 30 mins"
+              />
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
         <div className="form-section bg-[var(--secondary-color)] p-6 text-[var(--primary-color)] rounded-lg">
           <h3 className="section-subheader text-[var(--primary-color)] ">Weights Lifted (Check all that apply)</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3  !text-[var(--primary-color)]">
@@ -887,17 +1002,17 @@ const WorkHistoryReport = ({ avatarRef }) => {
         // },
 
         q340_activities340: [
-          
-      [''], // Standing and walking
-      [''], // Sitting
-      [''], // Stooping
-      [''], // Kneeling
-      [''], // Crouching
-      [''], // Crawling
-      [''], // Climbing stairs
-      [''], // Climbing ladders
 
-    
+          [''], // Standing and walking
+          [''], // Sitting
+          [''], // Stooping
+          [''], // Kneeling
+          [''], // Crouching
+          [''], // Crawling
+          [''], // Climbing stairs
+          [''], // Climbing ladders
+
+
 
         ],
         q341_tellUs341: '',
@@ -917,17 +1032,17 @@ const WorkHistoryReport = ({ avatarRef }) => {
         q230_didThis230: 'Yes',
         q231_ifYes: '',
         q233_activities233: [
-          
-      [''], // Standing and walking
-      [''], // Sitting
-      [''], // Stooping
-      [''], // Kneeling
-      [''], // Crouching
-      [''], // Crawling
-      [''], // Climbing stairs
-      [''], // Climbing ladders
 
-    
+          [''], // Standing and walking
+          [''], // Sitting
+          [''], // Stooping
+          [''], // Kneeling
+          [''], // Crouching
+          [''], // Crawling
+          [''], // Climbing stairs
+          [''], // Climbing ladders
+
+
 
         ],
         q236_tellUs236: '',
@@ -946,16 +1061,31 @@ const WorkHistoryReport = ({ avatarRef }) => {
         q251_listThe251: '',
         q252_didThis252: 'Yes',
         q253_ifYes253: '',
-        q255_activities255: {
-          standing: '',
-          sitting: '',
-          stooping: '',
-          kneeling: '',
-          crouching: '',
-          crawling: '',
-          climbingStairs: '',
-          climbingLadders: '',
-        },
+        q255_activities255:
+          // {
+          //   standing: '',
+          //   sitting: '',
+          //   stooping: '',
+          //   kneeling: '',
+          //   crouching: '',
+          //   crawling: '',
+          //   climbingStairs: '',
+          //   climbingLadders: '',
+          // },
+          [
+
+            [''], // Standing and walking
+            [''], // Sitting
+            [''], // Stooping
+            [''], // Kneeling
+            [''], // Crouching
+            [''], // Crawling
+            [''], // Climbing stairs
+            [''], // Climbing ladders
+
+
+
+          ],
         q258_tellUs258: '',
         q259_selectThe259: [],
         q261_didThis261: [],
@@ -973,17 +1103,17 @@ const WorkHistoryReport = ({ avatarRef }) => {
         q274_didThis274: 'Yes',
         q275_ifYes275: '',
         q277_activities277: [
-          
-      [''], // Standing and walking
-      [''], // Sitting
-      [''], // Stooping
-      [''], // Kneeling
-      [''], // Crouching
-      [''], // Crawling
-      [''], // Climbing stairs
-      [''], // Climbing ladders
 
-    
+          [''], // Standing and walking
+          [''], // Sitting
+          [''], // Stooping
+          [''], // Kneeling
+          [''], // Crouching
+          [''], // Crawling
+          [''], // Climbing stairs
+          [''], // Climbing ladders
+
+
 
         ],
         q280_tellUs280: '',
@@ -1003,17 +1133,17 @@ const WorkHistoryReport = ({ avatarRef }) => {
         q296_didThis296: 'Yes',
         q297_ifYes297: '',
         q299_activities299: [
-          
-      [''], // Standing and walking
-      [''], // Sitting
-      [''], // Stooping
-      [''], // Kneeling
-      [''], // Crouching
-      [''], // Crawling
-      [''], // Climbing stairs
-      [''], // Climbing ladders
 
-    
+          [''], // Standing and walking
+          [''], // Sitting
+          [''], // Stooping
+          [''], // Kneeling
+          [''], // Crouching
+          [''], // Crawling
+          [''], // Climbing stairs
+          [''], // Climbing ladders
+
+
 
         ],
         q302_tellUs302: '',
@@ -1050,6 +1180,7 @@ const WorkHistoryReport = ({ avatarRef }) => {
     Object.keys(formData).forEach((key) => {
       if (key.includes('activities')) {
         Object.entries(formData[key]).forEach(([activity, value]) => {
+          console.log("Activity array print:", `${key}[${activity}]`, value);
           submissionData.append(`${key}[${activity}]`, value);
         });
       } else if (key === 'q319_mailingAddress') {
