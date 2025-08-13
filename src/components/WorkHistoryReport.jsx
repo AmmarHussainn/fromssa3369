@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+
 import StreamingAvatar, {
   AvatarQuality,
   StreamingEvents,
@@ -233,7 +235,7 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               name={fields[jobIndex].per}
               value={formData[fields[jobIndex].per] || 'Hour'}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--secondary-text)] bg-[var(--secondary-color)] text-[var(--primary-color)]"
             >
               <option value="Hour">Hour</option>
               <option value="Day">Day</option>
@@ -1122,15 +1124,70 @@ const WorkHistoryReport = ({ avatarRef }) => {
         },
       });
       if (response.ok) {
-        alert('Form submitted successfully! 🎉');
+             // Show SweetAlert2 success message
+      Swal.fire({
+        title: 'Success!',
+        text: 'Thank you for submitting the form!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        timer: 3000,
+        timerProgressBar: true,
+      }).then(() => {
+        // Clear form data
+        const emptyForm = {
+          q190_name: '',
+          q326_socialSecurity: '',
+          q327_primary327: '',
+          q328_secondaryif328: '',
+          q197_jobs: [
+            ['', '', '', ''],
+            ['', '', '', ''],
+            ['', '', '', ''],
+            ['', '', '', ''],
+            ['', '', '', ''],
+            ['', '', '', ''],
+            ['', '', '', ''],
+            ['', '', '', ''],
+            ['', '', '', ''],
+            ['', '', '', ''],
+          ],
+        
+          q319_mailingAddress: {
+            addr_line1: '',
+            addr_line2: '',
+            city: '',
+            state: '',
+            postal: '',
+            country: '',
+          },
+         
+        };
+        
+        setFormData(emptyForm);
         localStorage.removeItem('workHistoryFormData');
         localStorage.removeItem('workHistoryFormTimestamp');
+        
+        // Refresh the page after 3 seconds
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      });
       } else {
-        alert('Error submitting form. Please try again.');
+         Swal.fire({
+        title: 'Error',
+        text: 'Error submitting form. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      })
       }
     } catch (error) {
       console.error('Submission error:', error);
-      alert('An error occurred while submitting the form.');
+       Swal.fire({
+      title: 'Error',
+      text: 'An error occurred while submitting the form.',
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
     }
   };
 
