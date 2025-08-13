@@ -18,8 +18,6 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
     }));
   };
 
-
-
   const handleActivityChange = (e, fieldIndex) => {
     const { value } = e.target;
     const activitiesFieldName = fields[jobIndex].activities;
@@ -32,26 +30,25 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
       };
     });
   };
+
   const handleHandArmActivityChange = (e, activityType, rowIndex, colIndex) => {
     const { value, type, checked } = e.target;
     const fieldName = fields[jobIndex][activityType];
-
     setFormData(prev => {
       const currentActivities = prev[fieldName] || [[false, false, ''], [false, false, '']];
       const newActivities = [...currentActivities];
-
       if (type === 'checkbox') {
         newActivities[rowIndex][colIndex] = checked;
       } else {
         newActivities[rowIndex][colIndex] = value;
       }
-
       return {
         ...prev,
         [fieldName]: newActivities,
       };
     });
   };
+
   const handleCheckboxArrayChange = (e, fieldName) => {
     const { value, checked } = e.target;
     setFormData((prev) => {
@@ -194,10 +191,9 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
     'Reaching overhead (above the shoulder)'
   ];
 
-
   return (
-    <div className="form-section bg-[var(--card-bg)] p-6 rounded-lg h-[900px] shadow-md border border-[var(--border-color)] mb-6">
-      <div className="section-header bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 -mt-6 mb-6">
+    <div className="bg-[var(--card-bg)] p-6 rounded-lg h-[900px]   mb-6">
+      <div className="bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 -mt-6 mb-6">
         <div className="flex items-center">
           <div className="bg-white text-[var(--primary-color)] rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">
             {jobIndex}
@@ -207,37 +203,37 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
       </div>
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="form-group">
-            <label className="form-label">Job Title</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Job Title</label>
             <input
               type="text"
               name={fields[jobIndex].title}
               value={formData[fields[jobIndex].title] || ''}
               onChange={handleInputChange}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="Enter job title"
             />
           </div>
-          <div className="form-group">
-            <label className="form-label">Rate of Pay</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Rate of Pay</label>
             <input
               type="text"
               name={fields[jobIndex].rate}
               value={formData[fields[jobIndex].rate] || ''}
               onChange={handleInputChange}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="Enter rate of pay"
             />
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="form-group">
-            <label className="form-label">Pay Period</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Pay Period</label>
             <select
               name={fields[jobIndex].per}
               value={formData[fields[jobIndex].per] || 'Hour'}
               onChange={handleInputChange}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
             >
               <option value="Hour">Hour</option>
               <option value="Day">Day</option>
@@ -245,27 +241,27 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               <option value="Month">Month</option>
             </select>
           </div>
-          <div className="form-group">
-            <label className="form-label">Hours per Day</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Hours per Day</label>
             <input
               type="number"
               name={fields[jobIndex].hours}
               value={formData[fields[jobIndex].hours] || ''}
               onChange={handleInputChange}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="8"
               min="0"
               max="24"
             />
           </div>
-          <div className="form-group">
-            <label className="form-label">Days per Week</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Days per Week</label>
             <input
               type="number"
               name={fields[jobIndex].days}
               value={formData[fields[jobIndex].days] || ''}
               onChange={handleInputChange}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="5"
               min="0"
               max="7"
@@ -273,36 +269,36 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
           </div>
         </div>
         <div className="space-y-6">
-          <div className="form-group">
-            <label className="form-label">Primary Job Duties</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Primary Job Duties</label>
             <textarea
               name={fields[jobIndex].duties}
               value={formData[fields[jobIndex].duties] || ''}
               onChange={handleInputChange}
-              className="form-textarea text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="Describe your main job responsibilities..."
               rows="4"
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="form-group">
-              <label className="form-label">Administrative Duties</label>
+            <div className="mb-4">
+              <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Administrative Duties</label>
               <textarea
                 name={fields[jobIndex].admin}
                 value={formData[fields[jobIndex].admin] || ''}
                 onChange={handleInputChange}
-                className="form-textarea text-[var(--primary-color)]"
+                className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
                 placeholder="Describe administrative duties, if any"
                 rows="3"
               />
             </div>
-            <div className="form-group">
-              <label className="form-label">Supervisory Duties</label>
+            <div className="mb-4">
+              <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Supervisory Duties</label>
               <textarea
                 name={fields[jobIndex].supervise}
                 value={formData[fields[jobIndex].supervise] || ''}
                 onChange={handleInputChange}
-                className="form-textarea text-[var(--primary-color)]"
+                className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
                 placeholder="Describe supervisory duties, if any"
                 rows="3"
               />
@@ -310,38 +306,38 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="form-group">
-            <label className="form-label">Machines/Tools Used</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Machines/Tools Used</label>
             <textarea
               name={fields[jobIndex].tools}
               value={formData[fields[jobIndex].tools] || ''}
               onChange={handleInputChange}
-              className="form-textarea text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="List machines, tools, or equipment used"
               rows="3"
             />
           </div>
           <div className="space-y-4">
-            <div className="form-group">
-              <label className="form-label">Customer Interaction</label>
+            <div className="mb-4">
+              <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Customer Interaction</label>
               <select
                 name={fields[jobIndex].interact}
                 value={formData[fields[jobIndex].interact] || 'Yes'}
                 onChange={handleInputChange}
-                className="form-input text-[var(--primary-color)]"
+                className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               >
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
             </div>
             {formData[fields[jobIndex].interact] === 'Yes' && (
-              <div className="form-group">
-                <label className="form-label">Interaction Details</label>
+              <div className="mb-4">
+                <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Interaction Details</label>
                 <textarea
                   name={fields[jobIndex].interactDetails}
                   value={formData[fields[jobIndex].interactDetails] || ''}
                   onChange={handleInputChange}
-                  className="form-textarea text-[var(--primary-color)]"
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
                   placeholder="Describe customer interaction"
                   rows="2"
                 />
@@ -349,19 +345,17 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
             )}
           </div>
         </div>
-        <div className="form-section bg-[var(--secondary-color)] p-6 rounded-lg">
-          <h3 className="section-subheader text-[var(--primary-color)]">Physical Activities (Hours per Day)</h3>
+        <div className=" rounded-lg">
+          <h3 className="text-lg font-semibold text-[var(--primary-color)] pb-2">Physical Activities (Hours per Day)</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
-
             {Object.entries(activityLabels).map(([activity, label], index) => (
-              <div key={activity} className="form-group">
-                <label className="form-label">{label}</label>
+              <div key={activity} className="mb-4">
+                <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">{label}</label>
                 <input
                   type="number"
                   value={formData[fields[jobIndex].activities]?.[index]?.[0] || ''}
                   onChange={(e) => handleActivityChange(e, index)}
-                  className="form-input text-[var(--primary-color)]"
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
                   placeholder="0"
                   min="0"
                   max="24"
@@ -369,129 +363,124 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
                 />
               </div>
             ))}
-
           </div>
         </div>
-
-
-
-        <div className="form-section bg-[var(--secondary-color)] p-6 rounded-lg">
-  <h3 className="section-subheader text-[var(--primary-color)]">Hand Activities</h3>
-  <table className="w-full border-collapse">
-    <thead>
-      <tr>
-        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Activity</th>
-        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">One Hand</th>
-        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Both Hands</th>
-        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">How much of your workday? (Hours/Minutes)</th>
-      </tr>
-    </thead>
-    <tbody>
-      {handActivityLabels.map((label, rowIndex) => {
-        const currentActivities = formData[fields[jobIndex].handActivities] || [[false, false, ''], [false, false, '']];
-        return (
-          <tr key={rowIndex}>
-            <td className="p-2 border border-[var(--border-color)] text-[var(--primary-color)]">{label}</td>
-            <td className="p-2 border border-[var(--border-color)] text-center">
-              <input
-                type="checkbox"
-                checked={currentActivities[rowIndex]?.[0] || false}
-                onChange={(e) => handleHandArmActivityChange(e, 'handActivities', rowIndex, 0)}
-                className="checkbox-input"
-              />
-            </td>
-            <td className="p-2 border border-[var(--border-color)] text-center">
-              <input
-                type="checkbox"
-                checked={currentActivities[rowIndex]?.[1] || false}
-                onChange={(e) => handleHandArmActivityChange(e, 'handActivities', rowIndex, 1)}
-                className="checkbox-input"
-              />
-            </td>
-            <td className="p-2 border border-[var(--border-color)]">
-              <input
-                type="text"
-                value={currentActivities[rowIndex]?.[2] || ''}
-                onChange={(e) => handleHandArmActivityChange(e, 'handActivities', rowIndex, 2)}
-                className="form-input w-full"
-                placeholder="e.g. 2 hours"
-              />
-            </td>
-          </tr>
-        );
-      })}
-    </tbody>
-  </table>
-</div>
-
-<div className="form-section bg-[var(--secondary-color)] p-6 rounded-lg">
-  <h3 className="section-subheader text-[var(--primary-color)]">Arm Activities</h3>
-  <table className="w-full border-collapse">
-    <thead>
-      <tr>
-        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Activity</th>
-        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">One Arm</th>
-        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Both Arms</th>
-        <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">How much of your workday? (Hours/Minutes)</th>
-      </tr>
-    </thead>
-    <tbody>
-      {armActivityLabels.map((label, rowIndex) => {
-        const currentActivities = formData[fields[jobIndex].armActivities] || [[false, false, ''], [false, false, '']];
-        return (
-          <tr key={rowIndex}>
-            <td className="p-2 border border-[var(--border-color)] text-[var(--primary-color)]">{label}</td>
-            <td className="p-2 border border-[var(--border-color)] text-center">
-              <input
-                type="checkbox"
-                checked={currentActivities[rowIndex]?.[0] || false}
-                onChange={(e) => handleHandArmActivityChange(e, 'armActivities', rowIndex, 0)}
-                className="checkbox-input"
-              />
-            </td>
-            <td className="p-2 border border-[var(--border-color)] text-center">
-              <input
-                type="checkbox"
-                checked={currentActivities[rowIndex]?.[1] || false}
-                onChange={(e) => handleHandArmActivityChange(e, 'armActivities', rowIndex, 1)}
-                className="checkbox-input"
-              />
-            </td>
-            <td className="p-2 border border-[var(--border-color)]">
-              <input
-                type="text"
-                value={currentActivities[rowIndex]?.[2] || ''}
-                onChange={(e) => handleHandArmActivityChange(e, 'armActivities', rowIndex, 2)}
-                className="form-input w-full"
-                placeholder="e.g. 30 mins"
-              />
-            </td>
-          </tr>
-        );
-      })}
-    </tbody>
-  </table>
-</div>
-        <div className="form-section bg-[var(--secondary-color)] p-6 text-[var(--primary-color)] rounded-lg">
-          <h3 className="section-subheader text-[var(--primary-color)] ">Weights Lifted (Check all that apply)</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3  !text-[var(--primary-color)]">
+        <div className="  rounded-lg">
+          <h3 className="text-lg font-semibold text-[var(--primary-color)] pb-2">Hand Activities</h3>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr>
+                <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Activity</th>
+                <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">One Hand</th>
+                <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Both Hands</th>
+                <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">How much of your workday? (Hours/Minutes)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {handActivityLabels.map((label, rowIndex) => {
+                const currentActivities = formData[fields[jobIndex].handActivities] || [[false, false, ''], [false, false, '']];
+                return (
+                  <tr key={rowIndex}>
+                    <td className="p-2 border border-[var(--border-color)] text-[var(--primary-color)]">{label}</td>
+                    <td className="p-2 border border-[var(--border-color)] text-center">
+                      <input
+                        type="checkbox"
+                        checked={currentActivities[rowIndex]?.[0] || false}
+                        onChange={(e) => handleHandArmActivityChange(e, 'handActivities', rowIndex, 0)}
+                        className="mr-2"
+                      />
+                    </td>
+                    <td className="p-2 border border-[var(--border-color)] text-center">
+                      <input
+                        type="checkbox"
+                        checked={currentActivities[rowIndex]?.[1] || false}
+                        onChange={(e) => handleHandArmActivityChange(e, 'handActivities', rowIndex, 1)}
+                        className="mr-2"
+                      />
+                    </td>
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        value={currentActivities[rowIndex]?.[2] || ''}
+                        onChange={(e) => handleHandArmActivityChange(e, 'handActivities', rowIndex, 2)}
+                        className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
+                        placeholder="e.g. 2 hours"
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className=" rounded-lg">
+          <h3 className="text-lg  pb-2 font-semibold text-[var(--primary-color)]">Arm Activities</h3>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr>
+                <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Activity</th>
+                <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">One Arm</th>
+                <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">Both Arms</th>
+                <th className="p-2 text-left border border-[var(--border-color)] text-[var(--primary-color)]">How much of your workday? (Hours/Minutes)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {armActivityLabels.map((label, rowIndex) => {
+                const currentActivities = formData[fields[jobIndex].armActivities] || [[false, false, ''], [false, false, '']];
+                return (
+                  <tr key={rowIndex}>
+                    <td className="p-2 border border-[var(--border-color)] text-[var(--primary-color)]">{label}</td>
+                    <td className="p-2 border border-[var(--border-color)] text-center">
+                      <input
+                        type="checkbox"
+                        checked={currentActivities[rowIndex]?.[0] || false}
+                        onChange={(e) => handleHandArmActivityChange(e, 'armActivities', rowIndex, 0)}
+                        className="mr-2"
+                      />
+                    </td>
+                    <td className="p-2 border border-[var(--border-color)] text-center">
+                      <input
+                        type="checkbox"
+                        checked={currentActivities[rowIndex]?.[1] || false}
+                        onChange={(e) => handleHandArmActivityChange(e, 'armActivities', rowIndex, 1)}
+                        className="mr-2"
+                      />
+                    </td>
+                    <td className="p-2 border border-[var(--border-color)]">
+                      <input
+                        type="text"
+                        value={currentActivities[rowIndex]?.[2] || ''}
+                        onChange={(e) => handleHandArmActivityChange(e, 'armActivities', rowIndex, 2)}
+                        className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
+                        placeholder="e.g. 30 mins"
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className="  rounded-lg">
+          <h3 className="text-lg pb-2 font-semibold text-[var(--primary-color)]">Weights Lifted (Check all that apply)</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {['Less than 1 lb.', 'Less than 10 lbs.', '20 lbs.', '50 lbs.', '100 lbs. or more', 'Other'].map((weight) => (
-              <label key={weight} className="checkbox-label text-[var(--primary-color)] ">
+              <label key={weight} className="flex items-center p-3 border rounded-md cursor-pointer">
                 <input
                   type="checkbox"
                   value={weight}
                   checked={formData[fields[jobIndex].weights]?.includes(weight) || false}
                   onChange={(e) => handleCheckboxArrayChange(e, fields[jobIndex].weights)}
-                  className="checkbox-input text-[var(--primary-color)]"
+                  className="mr-2"
                 />
-                <span className="checkbox-text text-[var(--primary-color)]">{weight}</span>
+                <span className="text-sm text-[var(--primary-color)]">{weight}</span>
               </label>
             ))}
           </div>
         </div>
-        <div className="form-section bg-[var(--secondary-color)] p-6 rounded-lg">
-          <h3 className="section-subheader !text-[var(--primary-color)]">Environmental Conditions (Check all that apply)</h3>
-          <div className="grid grid-cols-1 !text-[var(--primary-color)] md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="  rounded-lg">
+          <h3 className="text-lg py-2 font-semibold text-[var(--primary-color)]">Environmental Conditions (Check all that apply)</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {[
               'Outdoors',
               'Extreme heat (non-weather related)',
@@ -505,50 +494,50 @@ const JobDetails = ({ jobIndex, formData, setFormData, isLastJob, onNext, onPrev
               'Loud noises',
               'Other',
             ].map((condition) => (
-              <label key={condition} className="checkbox-label text-[var(--primary-color)]">
+              <label key={condition} className="flex items-center p-3 border rounded-md cursor-pointer">
                 <input
                   type="checkbox"
                   value={condition}
                   checked={formData[fields[jobIndex].conditions]?.includes(condition) || false}
                   onChange={(e) => handleCheckboxArrayChange(e, fields[jobIndex].conditions)}
-                  className="checkbox-input text-[var(--primary-color)] "
+                  className="mr-2"
                 />
-                <span className="checkbox-text text-[var(--primary-color)]">{condition}</span>
+                <span className="text-sm text-[var(--primary-color)]">{condition}</span>
               </label>
             ))}
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="form-group">
-            <label className="form-label">Exposure Frequency</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Exposure Frequency</label>
             <input
               type="text"
               name={fields[jobIndex].exposure}
               value={formData[fields[jobIndex].exposure] || ''}
               onChange={handleInputChange}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="Describe exposure frequency"
             />
           </div>
-          <div className="form-group">
-            <label className="form-label">Exposure Details</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Exposure Details</label>
             <textarea
               name={fields[jobIndex].exposureDetails}
               value={formData[fields[jobIndex].exposureDetails] || ''}
               onChange={handleInputChange}
-              className="form-textarea text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="Explain exposure details"
               rows="3"
             />
           </div>
         </div>
-        <div className="form-group">
-          <label className="form-label text-[var(--primary-color)]">Additional Comments</label>
+        <div className="mb-4">
+          <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Additional Comments</label>
           <textarea
             name={fields[jobIndex].comments}
             value={formData[fields[jobIndex].comments] || ''}
             onChange={handleInputChange}
-            className="form-textarea text-[var(--primary-color)]"
+            className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
             placeholder="Any additional comments about this job"
             rows="3"
           />
@@ -604,8 +593,8 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
   };
 
   return (
-    <div className="form-section bg-[var(--card-bg)] p-6 rounded-lg shadow-md border border-[var(--border-color)] mb-6">
-      <div className="section-header bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 -mt-6 mb-6">
+    <div className="bg-[var(--card-bg)] p-6 rounded-lg shadow-md border border-[var(--border-color)] mb-6">
+      <div className="bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 -mt-6 mb-6">
         <div className="flex items-center">
           <div className="bg-[var(--card-bg)] text-[var(--primary-color)] rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">
             1
@@ -614,54 +603,54 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="form-group">
-          <label className="form-label">Full Name *</label>
+        <div className="mb-4">
+          <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Full Name *</label>
           <input
             type="text"
             name="q190_name"
             value={formData.q190_name}
             onChange={handleInputChange}
-            className="form-input text-[var(--primary-color)]"
+            className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
             placeholder="Enter your full name"
             required
           />
         </div>
-        <div className="form-group">
-          <label className="form-label">Social Security Number</label>
+        <div className="mb-4">
+          <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Social Security Number</label>
           <input
             type="text"
             name="q326_socialSecurity"
             value={formData.q326_socialSecurity}
             onChange={handleInputChange}
-            className="form-input text-[var(--primary-color)]"
+            className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
             placeholder="XXX-XX-XXXX"
           />
         </div>
-        <div className="form-group">
-          <label className="form-label">Primary Phone *</label>
+        <div className="mb-4">
+          <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Primary Phone *</label>
           <input
             type="tel"
             name="q327_primary327"
             value={formData.q327_primary327}
             onChange={handleInputChange}
-            className="form-input text-[var(--primary-color)]"
+            className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
             placeholder="(XXX) XXX-XXXX"
             required
           />
         </div>
-        <div className="form-group">
-          <label className="form-label">Secondary Phone</label>
+        <div className="mb-4">
+          <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Secondary Phone</label>
           <input
             type="tel"
             name="q328_secondaryif328"
             value={formData.q328_secondaryif328}
             onChange={handleInputChange}
-            className="form-input text-[var(--primary-color)]"
+            className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
             placeholder="(XXX) XXX-XXXX"
           />
         </div>
         <div className="mt-8">
-          <div className="section-header bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 mb-4">
+          <div className="bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 mb-4">
             <h3 className="text-lg font-semibold text-[var(--primary-color)]">Job History Summary</h3>
           </div>
           <div className="overflow-x-auto">
@@ -683,7 +672,7 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
                         value={job[0] || ''}
                         name={`q197_jobs[${index}][0]`}
                         onChange={(e) => handleJobChange(index, 0, e.target.value)}
-                        className="w-full p-2 bg-transparent  text-[var(--primary-color)]focus:outline-none"
+                        className="w-full p-2 bg-transparent text-[var(--primary-color)] focus:outline-none"
                         placeholder="Enter title"
                       />
                     </td>
@@ -703,7 +692,7 @@ const PersonalInfoSection = ({ formData, setFormData, onNext }) => {
                         value={job[2] || ''}
                         name={`q197_jobs[${index}][2]`}
                         onChange={(e) => handleJobChange(index, 2, e.target.value)}
-                        className="w-full p-2 bg-transparent  text-[var(--primary-color)] focus:outline-none"
+                        className="w-full p-2 bg-transparent text-[var(--primary-color)] focus:outline-none"
                         placeholder="MM/YYYY"
                       />
                     </td>
@@ -747,8 +736,8 @@ const RemarksSection = ({ formData, setFormData, onNext, onPrev }) => {
   };
 
   return (
-    <div className="form-section bg-[var(--card-bg)] p-6 rounded-lg shadow-md border border-[var(--border-color)] mb-6">
-      <div className="section-header bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 -mt-6 mb-6">
+    <div className="bg-[var(--card-bg)] p-6 rounded-lg shadow-md border border-[var(--border-color)] mb-6">
+      <div className="bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 -mt-6 mb-6">
         <div className="flex items-center">
           <div className="bg-white text-[var(--primary-color)] rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">
             📝
@@ -756,13 +745,13 @@ const RemarksSection = ({ formData, setFormData, onNext, onPrev }) => {
           <h2 className="text-xl font-bold text-[var(--primary-color)]">Additional Remarks</h2>
         </div>
       </div>
-      <div className="form-group">
-        <label className="form-label">Additional Remarks</label>
+      <div className="mb-4">
+        <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Additional Remarks</label>
         <textarea
           name="q313_typeA"
           value={formData.q313_typeA}
           onChange={handleInputChange}
-          className="form-textarea text-[var(--primary-color)]"
+          className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
           placeholder="Enter any additional remarks or information..."
           rows="6"
         />
@@ -807,8 +796,8 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
   };
 
   return (
-    <div className="form-section bg-[var(--card-bg)] p-6 rounded-lg shadow-md border border-[var(--border-color)] mb-6">
-      <div className="section-header bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 -mt-6 mb-6">
+    <div className="bg-[var(--card-bg)] p-6 rounded-lg shadow-md border border-[var(--border-color)] mb-6">
+      <div className="bg-[var(--section-header-bg)] text-[var(--text-color)] p-4 rounded-t-lg -mx-6 -mt-6 mb-6">
         <div className="flex items-center">
           <div className="bg-white text-[var(--primary-color)] rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">
             👤
@@ -818,24 +807,24 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
       </div>
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="form-group">
-            <label className="form-label">Date of Report</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Date of Report</label>
             <input
               type="text"
               name="q315_dateReport"
               value={formData.q315_dateReport}
               onChange={handleInputChange}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="MM/DD/YYYY"
             />
           </div>
-          <div className="form-group">
-            <label className="form-label">Who is Completing</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Who is Completing</label>
             <select
               name="q316_whoIs"
               value={formData.q316_whoIs}
               onChange={handleInputChange}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
             >
               <option value="Myself">Myself</option>
               <option value="Other">Other</option>
@@ -843,44 +832,44 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="form-group">
-            <label className="form-label">Name</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Name</label>
             <input
               type="text"
               name="q317_name317"
               value={formData.q317_name317}
               onChange={handleInputChange}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="Enter name"
             />
           </div>
-          <div className="form-group">
-            <label className="form-label">Relationship</label>
+          <div className="mb-4">
+            <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Relationship</label>
             <input
               type="text"
               name="q318_name318"
               value={formData.q318_name318}
               onChange={handleInputChange}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="Enter relationship"
             />
           </div>
         </div>
-        <div className="form-group">
-          <label className="form-label">Mailing Address</label>
+        <div className="mb-4">
+          <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Mailing Address</label>
           <div className="space-y-3">
             <input
               type="text"
               value={formData.q319_mailingAddress.addr_line1}
               onChange={(e) => handleAddressChange('addr_line1', e.target.value)}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="Address Line 1"
             />
             <input
               type="text"
               value={formData.q319_mailingAddress.addr_line2}
               onChange={(e) => handleAddressChange('addr_line2', e.target.value)}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="Address Line 2"
             />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -888,21 +877,21 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
                 type="text"
                 value={formData.q319_mailingAddress.city}
                 onChange={(e) => handleAddressChange('city', e.target.value)}
-                className="form-input text-[var(--primary-color)]"
+                className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
                 placeholder="City"
               />
               <input
                 type="text"
                 value={formData.q319_mailingAddress.state}
                 onChange={(e) => handleAddressChange('state', e.target.value)}
-                className="form-input text-[var(--primary-color)]"
+                className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
                 placeholder="State"
               />
               <input
                 type="text"
                 value={formData.q319_mailingAddress.postal}
                 onChange={(e) => handleAddressChange('postal', e.target.value)}
-                className="form-input text-[var(--primary-color)]"
+                className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
                 placeholder="Postal Code"
               />
             </div>
@@ -910,19 +899,19 @@ const CompletionSection = ({ formData, setFormData, onSubmit, onPrev }) => {
               type="text"
               value={formData.q319_mailingAddress.country}
               onChange={(e) => handleAddressChange('country', e.target.value)}
-              className="form-input text-[var(--primary-color)]"
+              className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
               placeholder="Country"
             />
           </div>
         </div>
-        <div className="form-group">
-          <label className="form-label">Daytime Phone</label>
+        <div className="mb-4">
+          <label className="block text-[var(--label-text)] font-medium mb-2 text-sm">Daytime Phone</label>
           <input
             type="tel"
             name="q320_daytimePhone"
             value={formData.q320_daytimePhone}
             onChange={handleInputChange}
-            className="form-input text-[var(--primary-color)]"
+            className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] text-[var(--primary-color)]"
             placeholder="(XXX) XXX-XXXX"
           />
         </div>
@@ -956,7 +945,6 @@ const WorkHistoryReport = ({ avatarRef }) => {
     const savedTimestamp = localStorage.getItem('workHistoryFormTimestamp');
     const now = new Date().getTime();
     const twentyFourHours = 24 * 60 * 60 * 1000;
-
     if (savedData && savedTimestamp && now - savedTimestamp < twentyFourHours) {
       return JSON.parse(savedData);
     } else {
@@ -990,30 +978,8 @@ const WorkHistoryReport = ({ avatarRef }) => {
         q207_listThe: '',
         q209_didThis: 'Yes',
         q208_listThe208: '',
-        // q340_activities340: {
-        //   standing: '',
-        //   sitting: '',
-        //   stooping: '',
-        //   kneeling: '',
-        //   crouching: '',
-        //   crawling: '',
-        //   climbingStairs: '',
-        //   climbingLadders: '',
-        // },
-
         q340_activities340: [
-
-          [''], // Standing and walking
-          [''], // Sitting
-          [''], // Stooping
-          [''], // Kneeling
-          [''], // Crouching
-          [''], // Crawling
-          [''], // Climbing stairs
-          [''], // Climbing ladders
-
-
-
+          [''], [''], [''], [''], [''], [''], [''], ['']
         ],
         q341_tellUs341: '',
         q342_selectThe342: [],
@@ -1032,18 +998,7 @@ const WorkHistoryReport = ({ avatarRef }) => {
         q230_didThis230: 'Yes',
         q231_ifYes: '',
         q233_activities233: [
-
-          [''], // Standing and walking
-          [''], // Sitting
-          [''], // Stooping
-          [''], // Kneeling
-          [''], // Crouching
-          [''], // Crawling
-          [''], // Climbing stairs
-          [''], // Climbing ladders
-
-
-
+          [''], [''], [''], [''], [''], [''], [''], ['']
         ],
         q236_tellUs236: '',
         q237_selectThe237: [],
@@ -1061,31 +1016,9 @@ const WorkHistoryReport = ({ avatarRef }) => {
         q251_listThe251: '',
         q252_didThis252: 'Yes',
         q253_ifYes253: '',
-        q255_activities255:
-          // {
-          //   standing: '',
-          //   sitting: '',
-          //   stooping: '',
-          //   kneeling: '',
-          //   crouching: '',
-          //   crawling: '',
-          //   climbingStairs: '',
-          //   climbingLadders: '',
-          // },
-          [
-
-            [''], // Standing and walking
-            [''], // Sitting
-            [''], // Stooping
-            [''], // Kneeling
-            [''], // Crouching
-            [''], // Crawling
-            [''], // Climbing stairs
-            [''], // Climbing ladders
-
-
-
-          ],
+        q255_activities255: [
+          [''], [''], [''], [''], [''], [''], [''], ['']
+        ],
         q258_tellUs258: '',
         q259_selectThe259: [],
         q261_didThis261: [],
@@ -1103,18 +1036,7 @@ const WorkHistoryReport = ({ avatarRef }) => {
         q274_didThis274: 'Yes',
         q275_ifYes275: '',
         q277_activities277: [
-
-          [''], // Standing and walking
-          [''], // Sitting
-          [''], // Stooping
-          [''], // Kneeling
-          [''], // Crouching
-          [''], // Crawling
-          [''], // Climbing stairs
-          [''], // Climbing ladders
-
-
-
+          [''], [''], [''], [''], [''], [''], [''], ['']
         ],
         q280_tellUs280: '',
         q281_selectThe281: [],
@@ -1133,18 +1055,7 @@ const WorkHistoryReport = ({ avatarRef }) => {
         q296_didThis296: 'Yes',
         q297_ifYes297: '',
         q299_activities299: [
-
-          [''], // Standing and walking
-          [''], // Sitting
-          [''], // Stooping
-          [''], // Kneeling
-          [''], // Crouching
-          [''], // Crawling
-          [''], // Climbing stairs
-          [''], // Climbing ladders
-
-
-
+          [''], [''], [''], [''], [''], [''], [''], ['']
         ],
         q302_tellUs302: '',
         q303_selectThe303: [],
@@ -1180,7 +1091,6 @@ const WorkHistoryReport = ({ avatarRef }) => {
     Object.keys(formData).forEach((key) => {
       if (key.includes('activities')) {
         Object.entries(formData[key]).forEach(([activity, value]) => {
-          console.log("Activity array print:", `${key}[${activity}]`, value);
           submissionData.append(`${key}[${activity}]`, value);
         });
       } else if (key === 'q319_mailingAddress') {
@@ -1371,88 +1281,6 @@ const WorkHistoryReport = ({ avatarRef }) => {
           />
         )}
       </div>
-      <style jsx>{`
-        .form-section {
-          background-color: var(--card-bg);
-          border: 1px solid var(--border-color);
-          border-radius: 0.5rem;
-          padding: 1.5rem;
-          margin-bottom: 1.5rem;
-        }
-        .section-header {
-          background-color: var(--section-header-bg);
-          color: var(--text-color);
-          padding: 1rem;
-          border-radius: 0.5rem 0.5rem 0 0;
-          margin: -1.5rem -1.5rem 1.5rem -1.5rem;
-        }
-        .section-number {
-          background-color: white;
-          color: var(--primary-color);
-          border-radius: 9999px;
-          width: 2rem;
-          height: 2rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          margin-right: 0.75rem;
-        }
-        .section-title {
-          font-size: 1.25rem;
-          font-weight: bold;
-        }
-        .form-group {
-          margin-bottom: 1rem;
-        }
-        .form-label {
-          display: block;
-          color: var(--label-text);
-          font-weight: 600;
-          margin-bottom: 0.5rem;
-          font-size: 0.875rem;
-        }
-        .form-input {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          background-color: var(--input-bg);
-          
-          border: 1px solid var(--border-color);
-          border-radius: 0.375rem;
-          transition: all 0.2s;
-        }
-        
-        .form-textarea {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          background-color: var(--input-bg);
-          
-          border: 1px solid var(--border-color);
-          border-radius: 0.375rem;
-          transition: all 0.2s;
-          resize: vertical;
-        }
-       
-        .checkbox-label {
-          display: flex;
-          align-items: center;
-          padding: 0.75rem;
-          background-color: var(--input-bg);
-          border: 1px solid var(--border-color);
-          border-radius: 0.375rem;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        
-        .checkbox-input {
-          margin-right: 0.75rem;
-          accent-color: var(--primary-color);
-        }
-        .checkbox-text {
-          font-size: 0.875rem;
-          
-        }
-      `}</style>
     </div>
   );
 };
